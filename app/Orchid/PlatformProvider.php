@@ -42,7 +42,7 @@ class PlatformProvider extends OrchidServiceProvider
             Menu::make('Sample Screen')
                 ->icon('bs.collection')
                 ->route('platform.example')
-                ->badge(fn () => 6),
+                ->badge(fn() => 6),
 
             Menu::make('Form Elements')
                 ->icon('bs.card-list')
@@ -75,20 +75,27 @@ class PlatformProvider extends OrchidServiceProvider
             Menu::make(__('Roles'))
                 ->icon('bs.shield')
                 ->route('platform.systems.roles')
-                ->permission('platform.systems.roles')
-                ->divider(),
+                ->permission('platform.systems.roles'),
 
-            Menu::make('Documentation')
-                ->title('Docs')
-                ->icon('bs.box-arrow-up-right')
-                ->url('https://orchid.software/en/docs')
-                ->target('_blank'),
+            Menu::make(__('Referral Settings'))
+                ->icon('bs.percent')
+                ->route('platform.systems.settings')
+                ->permission('platform.systems.settings'),
 
-            Menu::make('Changelog')
-                ->icon('bs.box-arrow-up-right')
-                ->url('https://github.com/orchidsoftware/platform/blob/master/CHANGELOG.md')
-                ->target('_blank')
-                ->badge(fn () => Dashboard::version(), Color::DARK),
+
+            // Menu::make('Documentation')
+            //     ->title('Docs')
+            //     ->icon('bs.box-arrow-up-right')
+            //     ->url('https://orchid.software/en/docs')
+            //     ->target('_blank'),
+
+            // Menu::make('Changelog')
+            //     ->icon('bs.box-arrow-up-right')
+            //     ->url('https://github.com/orchidsoftware/platform/blob/master/CHANGELOG.md')
+            //     ->target('_blank')
+            //     ->badge(fn() => Dashboard::version(), Color::DARK),
+
+
         ];
     }
 
@@ -102,7 +109,8 @@ class PlatformProvider extends OrchidServiceProvider
         return [
             ItemPermission::group(__('System'))
                 ->addPermission('platform.systems.roles', __('Roles'))
-                ->addPermission('platform.systems.users', __('Users')),
+                ->addPermission('platform.systems.users', __('Users'))
+                ->addPermission('platform.systems.settings', __('Referral Settings')),
         ];
     }
 }
