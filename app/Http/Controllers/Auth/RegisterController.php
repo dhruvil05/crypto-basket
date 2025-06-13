@@ -26,7 +26,8 @@ class RegisterController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            // Add other fields as needed
+            'referral_code' => (new User)->generateReferralCode(),
+            'referred_by' => $request->referral_code ? User::where('referral_code', $request->referral_code)->first()->id : null,
         ]);
 
         // Optionally handle referral code here

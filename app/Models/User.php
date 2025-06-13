@@ -19,6 +19,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'referral_code',
+        'referred_by',
     ];
 
     /**
@@ -48,11 +50,13 @@ class User extends Authenticatable
      * @var array
      */
     protected $allowedFilters = [
-           'id'         => Where::class,
-           'name'       => Like::class,
-           'email'      => Like::class,
-           'updated_at' => WhereDateStartEnd::class,
-           'created_at' => WhereDateStartEnd::class,
+        'id'         => Where::class,
+        'name'       => Like::class,
+        'email'      => Like::class,
+        'referral_code' => Like::class,
+        'referred_by' => Where::class,
+        'updated_at' => WhereDateStartEnd::class,
+        'created_at' => WhereDateStartEnd::class,
     ];
 
     /**
@@ -64,7 +68,21 @@ class User extends Authenticatable
         'id',
         'name',
         'email',
+        'referral_code',
+        'referred_by',
         'updated_at',
         'created_at',
     ];
+
+    /**
+     * Generate a unique referral code for the user.
+     */
+    public function generateReferralCode(): string
+    {
+        do {
+            $code = strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 8));
+        } while (static::where('referral_code', $code)->exists());
+
+        return $code;
+    }
 }
