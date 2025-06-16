@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Orchid\Access\Impersonation;
 use App\Models\User;
+use App\Orchid\Layouts\User\UserReferralLayout;
 use Orchid\Screen\Action;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Screen;
@@ -76,6 +77,20 @@ class UserProfileScreen extends Screen
     public function layout(): iterable
     {
         return [
+            Layout::block(UserReferralLayout::class)
+                ->title(__('Referral Information'))
+                ->description(__("Referral Code"))
+                ->commands(
+                    Button::make(__('Copy'))
+                        ->type(Color::BASIC())
+                        ->id('copy-referral-btn')
+                        ->icon('bs.copy')
+                        ->rawAttributes([
+                            'type' => 'button',
+                            'onclick' => 'copyReferralCode()',
+                        ])
+                ),
+
             Layout::block(UserEditLayout::class)
                 ->title(__('Profile Information'))
                 ->description(__("Update your account's profile information and email address."))
@@ -119,7 +134,7 @@ class UserProfileScreen extends Screen
     {
         $guard = config('platform.guard', 'web');
         $request->validate([
-            'old_password' => 'required|current_password:'.$guard,
+            'old_password' => 'required|current_password:' . $guard,
             'password'     => 'required|confirmed|different:old_password',
         ]);
 
@@ -128,5 +143,20 @@ class UserProfileScreen extends Screen
         })->save();
 
         Toast::info(__('Password changed.'));
+    }
+
+    public function script(): string
+    {
+        return <<<'JS'
+            function copyReferralCode() {
+                var input = document.querySelector('input[name="user.referral_code"]');
+                if (input) {
+                    input.select();
+                    document.execCommand("copy");
+                    window.getSelection().removeAllRanges();
+                    window.platform.toast("Referral code copied!");
+                }
+            }
+        JS;
     }
 }
