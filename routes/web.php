@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Orchid\Screens\CryptoBasket\CryptoBasketEditScreen;
 use App\Orchid\Screens\CryptoBasket\CryptoBasketListScreen;
+use App\Orchid\Screens\Fund\FundScreen;
+use App\Orchid\Screens\Fund\PaymentDetailsScreen;
+use App\Orchid\Screens\Fund\TransactionEditScreen;
 use App\Orchid\Screens\ReferralSettingsScreen;
 
 Route::get('/register', function () {
@@ -35,3 +38,15 @@ Route::screen('/crypto-basket/{cryptoBasket}/edit', CryptoBasketEditScreen::clas
         ->parent('platform.baskets')
         ->push(__('Edit'), route('platform.baskets.edit', $crypto_basket)));
 
+
+Route::screen('/wallet', FundScreen::class)
+    ->name('platform.wallet')
+    ->breadcrumbs(fn($trail) => $trail
+        ->parent('platform.index')
+        ->push(__('Wallet'), route('platform.wallet')));
+
+Route::screen('/funds/payment_details', PaymentDetailsScreen::class)
+    ->name('platform.funds.payment_details');
+
+Route::screen('/funds/{transaction}/edit', TransactionEditScreen::class)
+    ->name('platform.funds.edit');

@@ -2,12 +2,17 @@
 @php
     $cryptos = $cryptos ?? [];
     $selected = $selected ?? [];
+
+    // Retrieve old input values, if available
+    $oldCryptocurrencies = old('basket.cryptocurrencies', $selected['cryptocurrencies'] ?? []);
+    $oldCoinIds = old('basket.coin_ids', $selected['coin_ids'] ?? []);
+    $oldNames = old('basket.names', $selected['names'] ?? []);
+    $oldPercentages = old('basket.percentages', $selected['percentages'] ?? []);
 @endphp
 
 <div id="crypto-basket-rows">
     @php
-        $selected = $selected ?? [];
-        $count = count($selected['cryptocurrencies'] ?? []);
+        $count = count($oldCryptocurrencies ?? []);
         $count = $count > 0 ? $count : 1; // At least one row
     @endphp
 
@@ -20,21 +25,21 @@
                     <option value="{{ $symbol }}"
                         data-coin_id="{{ $crypto['coin_id'] }}"
                         data-name="{{ $crypto['name'] }}"
-                        @if(($selected['cryptocurrencies'][$i] ?? '') == $symbol) selected @endif
+                        @if(($oldCryptocurrencies[$i] ?? '') == $symbol) selected @endif
                     >
                         {{ $crypto['label'] }}
                     </option>
                 @endforeach
             </select>
             <input type="hidden" name="basket[coin_ids][]" class="coin-id-field"
-                value="{{ $selected['coin_ids'][$i] ?? '' }}">
+                value="{{ $oldCoinIds[$i] ?? '' }}">
             <input type="hidden" name="basket[names][]" class="coin-name-field"
-                value="{{ $selected['names'][$i] ?? '' }}">
+                value="{{ $oldNames[$i] ?? '' }}">
         </div>
         <div class="col-md-4">
             <input type="number" name="basket[percentages][]" class="form-control"
                 placeholder="Percentage" min="0" max="100" step="0.01" required
-                value="{{ $selected['percentages'][$i] ?? '' }}">
+                value="{{ $oldPercentages[$i] ?? '' }}">
         </div>
         <div class="col-md-2">
             <button type="button" class="btn btn-danger remove-row" onclick="removeCryptoRow(this)">-</button>

@@ -33,7 +33,7 @@ class CryptoBasketEditScreen extends Screen
     public function query(CryptoBasket $cryptoBasket): iterable
     {
         $this->cryptoBasket = $cryptoBasket ?? new CryptoBasket();
-        
+
         try {
             $response = Http::get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc');
             if ($response->ok()) {
@@ -142,6 +142,15 @@ class CryptoBasketEditScreen extends Screen
             'basket.names' => 'required|array|min:1',
         ]);
 
+        // Calculate total percentage
+        $totalPercentage = collect($data['percentages'])->sum();
+
+        // Validate total percentage
+        if ($totalPercentage != 100) {
+            Toast::error('Total percentage must be 100%.');
+            return back()->withInput();
+        }
+        
         // Create or update the basket
         $cryptoBasket->name = $data['name'];
         $cryptoBasket->created_by = $cryptoBasket->created_by ?? auth()->id();

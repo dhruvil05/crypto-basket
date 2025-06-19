@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Orchid\Filters\Types\Like;
 use Orchid\Filters\Types\Where;
 use Orchid\Filters\Types\WhereDateStartEnd;
@@ -84,5 +85,10 @@ class User extends Authenticatable
         } while (static::where('referral_code', $code)->exists());
 
         return $code;
+    }
+
+    public function fund(): HasOne
+    {
+        return $this->hasOne(Wallet::class);
     }
 }
