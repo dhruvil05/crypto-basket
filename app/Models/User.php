@@ -91,4 +91,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Wallet::class);
     }
+
+    public function basketPurchases()
+    {
+        return $this->hasMany(BasketPurchase::class);
+    }
 }

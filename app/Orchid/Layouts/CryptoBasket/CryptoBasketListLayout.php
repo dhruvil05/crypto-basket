@@ -8,6 +8,7 @@ use App\Models\CryptoBasket;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\DropDown;
 use Orchid\Screen\Actions\Link;
+use Orchid\Screen\Actions\ModalToggle;
 use Orchid\Screen\Components\Cells\DateTimeSplit;
 use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Layouts\Table;
@@ -32,11 +33,38 @@ class CryptoBasketListLayout extends Table
                 ->cantHide()
                 ->filter(Input::make()),
 
+            TD::make('currencies', __('Currencies (%)'))
+                ->render(function (CryptoBasket $cryptoBaskets) {
+                    $summary = $cryptoBaskets->items->map(function ($item) {
+                        return $item->symbol . ' (' . $item->percentage . '%)';
+                    })->implode(', ');
+
+                    return "<small>{$summary}</small>";
+                })
+                ->sort()
+                ->cantHide()
+                ->filter(Input::make()),
+
             TD::make('created_at', __('Created'))
                 ->usingComponent(DateTimeSplit::class)
                 ->align(TD::ALIGN_RIGHT)
                 ->defaultHidden()
                 ->sort(),
+
+            TD::make(__('Purchase'))
+                ->align(TD::ALIGN_CENTER)
+                ->width('100px')
+                ->render(function (CryptoBasket $cryptoBasket) {
+                    return ModalToggle::make('Buy')
+                        ->modal('buyBasketModal')
+                        ->method('buyBasket')
+                        ->modalTitle('Invest in ' . $cryptoBasket->name)
+                        ->icon('bs.cart-plus')
+                        ->class('btn btn-success shadow rounded-1')
+                        ->asyncParameters([
+                            'basket_id' => $cryptoBasket->id,
+                        ]);
+                }),
 
             TD::make(__('Actions'))
                 ->align(TD::ALIGN_CENTER)
@@ -58,15 +86,7 @@ class CryptoBasketListLayout extends Table
                             ]),
                     ])),
 
-            TD::make(__('Purchase'))
-                ->align(TD::ALIGN_CENTER)
-                ->width('100px')
-                ->render(fn(CryptoBasket $cryptoBasket) => Button::make(__('Buy'))
-                    ->type(Color::SUCCESS)
-                    ->icon('bs.purchase')
-                    ->method('PurchaseBasket', [
-                        'id' => $cryptoBasket->id,
-                    ]),),
+
         ];
     }
 }

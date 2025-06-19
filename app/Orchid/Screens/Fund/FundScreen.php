@@ -8,13 +8,8 @@ use App\Models\Wallet;
 use App\Models\WalletTransaction;
 use App\Orchid\Layouts\Fund\FundLayout;
 use Orchid\Screen\Actions\Link;
-use Orchid\Screen\Actions\Button;
-use Orchid\Screen\Fields\Label;
-use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Layout;
-use Orchid\Support\Facades\Toast;
-use Orchid\Support\Color;
 
 
 class FundScreen extends Screen
@@ -60,7 +55,13 @@ class FundScreen extends Screen
      */
     public function commandBar(): iterable
     {
-        return [];
+        return [
+            Link::make(__('Add Funds'))
+                ->icon('bs.plus-circle')
+                ->route('platform.funds.payment_details')
+                ->canSee( auth()->user()?->hasAccess('platform.funds.wallet')),
+
+        ];
     }
 
     /**
@@ -71,24 +72,18 @@ class FundScreen extends Screen
     public function layout(): iterable
     {
         return [
-            Layout::tabs([
-                'Total cash' => Layout::split([
-                    Layout::view('platform::layouts.wallet_balance'),
-                    Layout::rows([
-                        Link::make('Add Funds')
-                            ->route('platform.funds.payment_details')
-                            ->icon('bs.plus-circle')
-                            ->type(Color::DEFAULT)
-                            ->class('btn btn-success')
-                            ->style('color: white; width: 100%;'),
-                        // Link::make('Withdraw Funds')
-                        //     ->type(Color::DEFAULT)
-                        //     ->class('btn btn-secondary')
-                        //     ->style('color: white; width: 100%;'),
-                    ])->canSee(auth()->user() && auth()->user()->hasAccess('platform.systems.users')),
-                ])->ratio(('70/30')),
-                'Recent Transactions' =>  FundLayout::class,
-            ]),
+            Layout::split([
+                FundLayout::class,
+                Layout::view('platform::layouts.wallet_balance'),
+            ])->ratio('70/30'),
+
+            // Layout::tabs([
+            //     'Total cash' => Layout::split([
+            //         Layout::view('platform::layouts.wallet_balance'),
+            //         FundLayout::class,
+            //     ])->ratio(('30/70')),
+            //     'Recent Transactions' =>  FundLayout::class,
+            // ]),
         ];
     }
 }

@@ -75,6 +75,11 @@ class PlatformProvider extends OrchidServiceProvider
                 ->title('Funds')
                 ->route('platform.wallet'),
 
+            Menu::make('Owned Baskets')
+                ->icon('bs.basket-fill')
+                ->route('platform.owned-baskets')
+                ->permission('platform.owned-baskets'),
+
             Menu::make(__('Users'))
                 ->icon('bs.people')
                 ->route('platform.systems.users')
@@ -120,6 +125,10 @@ class PlatformProvider extends OrchidServiceProvider
                 ->addPermission('platform.systems.roles', __('Roles'))
                 ->addPermission('platform.systems.users', __('Users'))
                 ->addPermission('platform.systems.settings', __('Referral Settings')),
+            ItemPermission::group(__('Funds'))
+                ->addPermission('platform.funds.wallet', __('Wallet'))
+                ->addPermission('platform.funds.edit', __('Wallet Transactions'))
+                ->addPermission('platform.owned-baskets', __('Owned Baskets')),
         ];
     }
 }

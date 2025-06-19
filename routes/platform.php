@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Orchid\Screens\CryptoBasket\CryptoBasketEditScreen;
+use App\Orchid\Screens\CryptoBasket\CryptoBasketListScreen;
+use App\Orchid\Screens\CryptoBasket\OwnedBasketScreen;
 use App\Orchid\Screens\Examples\ExampleActionsScreen;
 use App\Orchid\Screens\Examples\ExampleCardsScreen;
 use App\Orchid\Screens\Examples\ExampleChartsScreen;
@@ -11,6 +14,9 @@ use App\Orchid\Screens\Examples\ExampleGridScreen;
 use App\Orchid\Screens\Examples\ExampleLayoutsScreen;
 use App\Orchid\Screens\Examples\ExampleScreen;
 use App\Orchid\Screens\Examples\ExampleTextEditorsScreen;
+use App\Orchid\Screens\Fund\FundScreen;
+use App\Orchid\Screens\Fund\PaymentDetailsScreen;
+use App\Orchid\Screens\Fund\TransactionEditScreen;
 use App\Orchid\Screens\PlatformScreen;
 use App\Orchid\Screens\Role\RoleEditScreen;
 use App\Orchid\Screens\Role\RoleListScreen;
@@ -38,49 +44,49 @@ Route::screen('/main', PlatformScreen::class)
 // Platform > Profile
 Route::screen('profile', UserProfileScreen::class)
     ->name('platform.profile')
-    ->breadcrumbs(fn (Trail $trail) => $trail
+    ->breadcrumbs(fn(Trail $trail) => $trail
         ->parent('platform.index')
         ->push(__('Profile'), route('platform.profile')));
 
 // Platform > System > Users > User
 Route::screen('users/{user}/edit', UserEditScreen::class)
     ->name('platform.systems.users.edit')
-    ->breadcrumbs(fn (Trail $trail, $user) => $trail
+    ->breadcrumbs(fn(Trail $trail, $user) => $trail
         ->parent('platform.systems.users')
         ->push($user->name, route('platform.systems.users.edit', $user)));
 
 // Platform > System > Users > Create
 Route::screen('users/create', UserEditScreen::class)
     ->name('platform.systems.users.create')
-    ->breadcrumbs(fn (Trail $trail) => $trail
+    ->breadcrumbs(fn(Trail $trail) => $trail
         ->parent('platform.systems.users')
         ->push(__('Create'), route('platform.systems.users.create')));
 
 // Platform > System > Users
 Route::screen('users', UserListScreen::class)
     ->name('platform.systems.users')
-    ->breadcrumbs(fn (Trail $trail) => $trail
+    ->breadcrumbs(fn(Trail $trail) => $trail
         ->parent('platform.index')
         ->push(__('Users'), route('platform.systems.users')));
 
 // Platform > System > Roles > Role
 Route::screen('roles/{role}/edit', RoleEditScreen::class)
     ->name('platform.systems.roles.edit')
-    ->breadcrumbs(fn (Trail $trail, $role) => $trail
+    ->breadcrumbs(fn(Trail $trail, $role) => $trail
         ->parent('platform.systems.roles')
         ->push($role->name, route('platform.systems.roles.edit', $role)));
 
 // Platform > System > Roles > Create
 Route::screen('roles/create', RoleEditScreen::class)
     ->name('platform.systems.roles.create')
-    ->breadcrumbs(fn (Trail $trail) => $trail
+    ->breadcrumbs(fn(Trail $trail) => $trail
         ->parent('platform.systems.roles')
         ->push(__('Create'), route('platform.systems.roles.create')));
 
 // Platform > System > Roles
 Route::screen('roles', RoleListScreen::class)
     ->name('platform.systems.roles')
-    ->breadcrumbs(fn (Trail $trail) => $trail
+    ->breadcrumbs(fn(Trail $trail) => $trail
         ->parent('platform.index')
         ->push(__('Roles'), route('platform.systems.roles')));
 
@@ -102,3 +108,43 @@ Route::screen('/examples/charts', ExampleChartsScreen::class)->name('platform.ex
 Route::screen('/examples/cards', ExampleCardsScreen::class)->name('platform.example.cards');
 
 // Route::screen('idea', Idea::class, 'platform.screens.idea');
+// List all baskets
+Route::screen('/crypto-basket', CryptoBasketListScreen::class)
+    ->name('platform.baskets')
+    ->breadcrumbs(fn($trail) => $trail
+        ->parent('platform.index')
+        ->push(__('Crypto Baskets'), route('platform.baskets')));
+
+// Create new basket
+Route::screen('/crypto-basket/create', CryptoBasketEditScreen::class)
+    ->name('platform.baskets.create')
+    ->breadcrumbs(fn($trail) => $trail
+        ->parent('platform.baskets')
+        ->push(__('Create'), route('platform.baskets.create')));
+
+// Edit existing basket (uses route model binding)
+Route::screen('/crypto-basket/{cryptoBasket}/edit', CryptoBasketEditScreen::class)
+    ->name('platform.baskets.edit')
+    ->breadcrumbs(fn($trail, $crypto_basket) => $trail
+        ->parent('platform.baskets')
+        ->push(__('Edit'), route('platform.baskets.edit', $crypto_basket)));
+
+
+Route::screen('/wallet', FundScreen::class)
+    ->name('platform.wallet')
+    ->breadcrumbs(fn($trail) => $trail
+        ->parent('platform.index')
+        ->push(__('Wallet'), route('platform.wallet')));
+
+Route::screen('/funds/payment_details', PaymentDetailsScreen::class)
+    ->name('platform.funds.payment_details');
+
+Route::screen('/funds/{transaction}/edit', TransactionEditScreen::class)
+    ->name('platform.funds.edit');
+
+
+Route::screen('/owned-baskets', OwnedBasketScreen::class)
+    ->name('platform.owned-baskets')
+    ->breadcrumbs(fn($trail) => $trail
+        ->parent('platform.index')
+        ->push(__('Owned Baskets'), route('platform.owned-baskets')));

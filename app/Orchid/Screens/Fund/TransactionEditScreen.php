@@ -10,11 +10,8 @@ use App\Orchid\Layouts\Fund\TransactionStatusLayout;
 use Illuminate\Http\Request;
 use Orchid\Support\Facades\Toast;
 use Orchid\Screen\Actions\Button;
-use Orchid\Screen\Fields\TextArea;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Layout;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\TransactionRejected;
 
 class TransactionEditScreen extends Screen
 {
@@ -80,7 +77,8 @@ class TransactionEditScreen extends Screen
                         ->method('updateTransactionAmount')
                         ->confirm(__('Are you sure you want to update this transaction?'))
                         ->parameters(['transaction_id' => request()->route('transaction')]),
-                ]),
+                ])
+                ->canSee(auth()->user()?->hasAccess('platform.funds.edit')),
 
             Layout::block(TransactionStatusLayout::class)
                 ->title(__('Status'))
@@ -91,7 +89,8 @@ class TransactionEditScreen extends Screen
                         ->method('transactionStatus')
                         ->confirm(__('Are you sure you want to update this transaction?'))
                         ->parameters(['transaction_id' => request()->route('transaction')]),
-                ]),
+                ])
+                ->canSee(auth()->user()?->hasAccess('platform.funds.edit')),
 
         ];
     }

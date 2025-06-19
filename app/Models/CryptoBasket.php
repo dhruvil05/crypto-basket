@@ -13,7 +13,7 @@ class CryptoBasket extends Model
     protected $fillable = ['id', 'name', 'created_by'];
 
     protected $table = 'crypto_baskets';
-    
+
     public function getRouteKeyName()
     {
         return 'id';
@@ -27,5 +27,10 @@ class CryptoBasket extends Model
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function purchases()
+    {
+        return $this->hasMany(BasketPurchase::class);
     }
 }
