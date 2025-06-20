@@ -1,26 +1,23 @@
 <?php
 
-namespace App\Helpers;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
+if (!function_exists('inr_to_usd')) {
+    function inr_to_usd(float $inr): float
+    {
+        try {
+            $response = Http::get('https://open.er-api.com/v6/latest/INR');
 
-function inrToUsd(float $inrAmount): float
-{
-    try {
-        $response = Http::get('https://api.exchangerate.host/convert', [
-            'from' => 'INR',
-            'to' => 'USD',
-            'amount' => $inrAmount,
-        ]);
-
-        if ($response->ok() && isset($response['result'])) {
-            return round($response['result'], 2);
+            if ($response->ok() && isset($response['rates']['USD'])) {
+                $rate = $response['rates']['USD'];
+                return round($inr * $rate, 2);
+            }
+        } catch (\Throwable $e) {
+            \Log::error('Conversion failed: ' . $e->getMessage());
         }
-    } catch (\Exception $e) {
-        // Log or handle error
-    }
 
-    // Fallback value or error handling
-    return 0.0;
+        return 0.0;
+    }
 }

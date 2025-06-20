@@ -8,6 +8,7 @@ use Orchid\Support\Facades\Toast;
 use Orchid\Screen\Actions\Link;
 use App\Models\CryptoBasket;
 use App\Models\Wallet;
+use App\Models\WalletTransaction;
 use App\Orchid\Layouts\CryptoBasket\BuyBasketLayout;
 use App\Orchid\Layouts\CryptoBasket\CryptoBasketListLayout;
 use Illuminate\Http\Request;
@@ -94,6 +95,10 @@ class CryptoBasketListScreen extends Screen
             'amount' => 'required|numeric|min:0',
         ]);
 
+        $snapshot = CryptoBasket::with(['items' => function ($q) {
+            $q->select('crypto_basket_id', 'symbol', 'percentage'); // adjust fields as needed
+        }])->findOrFail($basketId)->toArray();
+
         $wallet = Wallet::where('user_id', $user->id)->first();
 
         if (!$wallet || $wallet->balance < $amount) {
@@ -104,9 +109,18 @@ class CryptoBasketListScreen extends Screen
         $wallet->balance -= $amount;
         $wallet->save();
 
-        $snapshot = CryptoBasket::with(['items' => function ($q) {
-            $q->select('crypto_basket_id', 'symbol', 'percentage'); // adjust fields as needed
-        }])->findOrFail($basketId)->toArray();
+        // Transaction logic: Deduct the amount from the user's wallet
+        $walletTransaction = new WalletTransaction();
+        $walletTransaction->user_id = $user->id;
+        $walletTransaction->type = 'purchase';
+        $walletTransaction->amount = $amount;
+        $walletTransaction->source = 'basket_purchase';
+        $walletTransaction->reference_id = $basketId; // Reference to the basket purchased
+        $walletTransaction->note = 'Purchased crypto basket: ' . $snapshot['name'];
+        $walletTransaction->save();
+
+
+        
         
         // Process the investment (store in DB, etc.)
         BasketPurchase::create([

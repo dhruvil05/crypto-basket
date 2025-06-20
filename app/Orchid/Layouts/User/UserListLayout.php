@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Orchid\Layouts\User;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\DropDown;
 use Orchid\Screen\Actions\Link;
@@ -32,13 +33,13 @@ class UserListLayout extends Table
                 ->sort()
                 ->cantHide()
                 ->filter(Input::make())
-                ->render(fn (User $user) => new Persona($user->presenter())),
+                ->render(fn(User $user) => new Persona($user->presenter())),
 
             TD::make('email', __('Email'))
                 ->sort()
                 ->cantHide()
                 ->filter(Input::make())
-                ->render(fn (User $user) => ModalToggle::make($user->email)
+                ->render(fn(User $user) => ModalToggle::make($user->email)
                     ->modal('editUserModal')
                     ->modalTitle($user->presenter()->title())
                     ->method('saveUser')
@@ -60,13 +61,18 @@ class UserListLayout extends Table
             TD::make(__('Actions'))
                 ->align(TD::ALIGN_CENTER)
                 ->width('100px')
-                ->render(fn (User $user) => DropDown::make()
+                ->render(fn(User $user) => DropDown::make()
                     ->icon('bs.three-dots-vertical')
                     ->list([
 
                         Link::make(__('Edit'))
                             ->route('platform.systems.users.edit', $user->id)
                             ->icon('bs.pencil'),
+
+                        Link::make(__('Activity History'))
+                            ->route('platform.user.activity_history', ['activity'=>$user->id])
+                            ->icon('bs.clock-history')
+                            ->canSee(Auth::user()->inRole('admin')),
 
                         Button::make(__('Delete'))
                             ->icon('bs.trash3')

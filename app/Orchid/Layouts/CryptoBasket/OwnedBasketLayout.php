@@ -32,7 +32,7 @@ class OwnedBasketLayout extends Table
                 ->render(fn($ownedBaskets) => $ownedBaskets->cryptoBasket->name ?? '-'),
 
             TD::make('amount', 'Invested Amount')
-                ->render(fn($ownedBaskets) => '$' . number_format((float)$ownedBaskets->amount, 2))
+                ->render(fn($ownedBaskets) => '₹' . number_format((float)$ownedBaskets->amount, 2).' ($'. number_format(inr_to_usd((float)$ownedBaskets->amount), 2) .')')
                 ->sort(),
 
             TD::make('created_at', 'Invested On')

@@ -34,41 +34,42 @@ class PlatformProvider extends OrchidServiceProvider
     public function menu(): array
     {
         return [
-            Menu::make('Get Started')
-                ->icon('bs.book')
-                ->title('Navigation')
-                ->route(config('platform.index')),
+            // Menu::make('Get Started')
+            //     ->icon('bs.book')
+            //     ->title('Navigation')
+            //     ->route(config('platform.index')),
 
             Menu::make('Crypto Baskets')
                 ->icon('bs.basket')
+                ->title('Navigation')
                 ->route('platform.baskets'),
 
-            Menu::make('Sample Screen')
-                ->icon('bs.collection')
-                ->route('platform.example')
-                ->badge(fn() => 6),
+            // Menu::make('Sample Screen')
+            //     ->icon('bs.collection')
+            //     ->route('platform.example')
+            //     ->badge(fn() => 6),
 
-            Menu::make('Form Elements')
-                ->icon('bs.card-list')
-                ->route('platform.example.fields')
-                ->active('*/examples/form/*'),
+            // Menu::make('Form Elements')
+            //     ->icon('bs.card-list')
+            //     ->route('platform.example.fields')
+            //     ->active('*/examples/form/*'),
 
-            Menu::make('Layouts Overview')
-                ->icon('bs.window-sidebar')
-                ->route('platform.example.layouts'),
+            // Menu::make('Layouts Overview')
+            //     ->icon('bs.window-sidebar')
+            //     ->route('platform.example.layouts'),
 
-            Menu::make('Grid System')
-                ->icon('bs.columns-gap')
-                ->route('platform.example.grid'),
+            // Menu::make('Grid System')
+            //     ->icon('bs.columns-gap')
+            //     ->route('platform.example.grid'),
 
-            Menu::make('Charts')
-                ->icon('bs.bar-chart')
-                ->route('platform.example.charts'),
+            // Menu::make('Charts')
+            //     ->icon('bs.bar-chart')
+            //     ->route('platform.example.charts'),
 
-            Menu::make('Cards')
-                ->icon('bs.card-text')
-                ->route('platform.example.cards')
-                ->divider(),
+            // Menu::make('Cards')
+            //     ->icon('bs.card-text')
+            //     ->route('platform.example.cards')
+            //     ->divider(),
 
             Menu::make('Wallet')
                 ->icon('bs.wallet2')

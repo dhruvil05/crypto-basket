@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Orchid\Screens\User\ActivityHistoryScreen;
 use App\Orchid\Screens\CryptoBasket\CryptoBasketEditScreen;
 use App\Orchid\Screens\CryptoBasket\CryptoBasketListScreen;
 use App\Orchid\Screens\CryptoBasket\OwnedBasketScreen;
@@ -93,7 +94,7 @@ Route::screen('roles', RoleListScreen::class)
 // Example...
 Route::screen('example', ExampleScreen::class)
     ->name('platform.example')
-    ->breadcrumbs(fn (Trail $trail) => $trail
+    ->breadcrumbs(fn(Trail $trail) => $trail
         ->parent('platform.index')
         ->push('Example Screen'));
 
@@ -142,6 +143,14 @@ Route::screen('/funds/payment_details', PaymentDetailsScreen::class)
 Route::screen('/funds/{transaction}/edit', TransactionEditScreen::class)
     ->name('platform.funds.edit');
 
+Route::screen('/funds/activity_history', ActivityHistoryScreen::class)
+    ->name('platform.funds.activity_history')
+    ->breadcrumbs(fn($trail) => $trail
+        ->parent('platform.wallet')
+        ->push(__('Activity History'), route('platform.funds.activity_history')));
+
+Route::screen('user/{activity}/activity_history', ActivityHistoryScreen::class)
+    ->name('platform.user.activity_history');
 
 Route::screen('/owned-baskets', OwnedBasketScreen::class)
     ->name('platform.owned-baskets')

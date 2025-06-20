@@ -57,9 +57,14 @@ class FundScreen extends Screen
     {
         return [
             Link::make(__('Add Funds'))
-                ->icon('bs.plus-circle')
+                ->icon('bs.cash-stack')
                 ->route('platform.funds.payment_details')
-                ->canSee( auth()->user()?->hasAccess('platform.funds.wallet')),
+                ->canSee(auth()->user()?->hasAccess('platform.funds.wallet')),
+
+            Link::make(__('Activity History'))
+                ->icon('bs.clock-history')
+                ->route('platform.funds.activity_history')
+                ->canSee(auth()->user()?->hasAccess('platform.funds.wallet')),
 
         ];
     }

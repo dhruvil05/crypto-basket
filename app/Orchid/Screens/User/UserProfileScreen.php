@@ -110,6 +110,9 @@ class UserProfileScreen extends Screen
                         ->icon('bs.check-circle')
                         ->method('changePassword')
                 ),
+
+            Layout::view('vendor.platform.script.custom_script')
+
         ];
     }
 
