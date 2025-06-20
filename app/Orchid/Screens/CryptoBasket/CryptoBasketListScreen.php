@@ -36,7 +36,7 @@ class CryptoBasketListScreen extends Screen
      */
     public function name(): ?string
     {
-        return 'Crypto Basket';
+        return 'Crypto Baskets';
     }
 
     /**

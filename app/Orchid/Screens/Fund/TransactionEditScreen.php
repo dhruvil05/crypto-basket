@@ -106,6 +106,14 @@ class TransactionEditScreen extends Screen
             $oldStatus = $transaction->status;
 
             $wallet = Wallet::where('user_id', $transaction->user_id)->first();
+            // check if the wallet exists
+            if (!$wallet) {
+                Wallet::create([
+                    'user_id' => $transaction->user_id,
+                    'balance' => 0,
+                ]);
+                $wallet = Wallet::where('user_id', $transaction->user_id)->first();
+            }
 
             if ($status === 'approved' && $oldStatus !== 'approved' && !$transaction->amount_added) {
 
@@ -150,6 +158,7 @@ class TransactionEditScreen extends Screen
         if ($walletTransaction) {
             $walletTransaction->amount = $amount;
             $walletTransaction->save();
+
 
             Toast::success(__('Transaction amount updated successfully.'));
         } else {

@@ -39,7 +39,7 @@ class PlatformProvider extends OrchidServiceProvider
                 ->title('Navigation')
                 ->route(config('platform.index')),
 
-            Menu::make('Cryto Baskets')
+            Menu::make('Crypto Baskets')
                 ->icon('bs.basket')
                 ->route('platform.baskets'),
 
