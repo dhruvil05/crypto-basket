@@ -8,6 +8,7 @@ use App\Orchid\Layouts\Fund\AmountDetailLayout;
 use App\Orchid\Layouts\Fund\TransactionDetailsLayout;
 use App\Orchid\Layouts\Fund\TransactionStatusLayout;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Orchid\Support\Facades\Toast;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Screen;
@@ -23,12 +24,19 @@ class TransactionEditScreen extends Screen
      * @return array
      */
     public function query(): iterable
-    {
-        $this->transaction = WalletTransaction::where('user_id', auth()->user()?->id)
-            ->where('id', request()->route('transaction'))
-            ->first();
+    {   
+        $user = Auth::user();
+        
+        if($user && $user->inRole('admin')){
+            $userID = request()->get('transaction');
+        }else{
+            $userID = $user?->id;
+        }
 
-        $this->wallet = Wallet::where('user_id', auth()->user()?->id)->first();
+        $this->transaction = WalletTransaction::where('id', request()->route('transaction'))
+        ->first();
+        
+        $this->wallet = Wallet::where('user_id', $userID)->first();
 
         return [
             'transaction' => $this->transaction,

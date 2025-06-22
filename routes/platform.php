@@ -18,6 +18,7 @@ use App\Orchid\Screens\Examples\ExampleTextEditorsScreen;
 use App\Orchid\Screens\Fund\FundScreen;
 use App\Orchid\Screens\Fund\PaymentDetailsScreen;
 use App\Orchid\Screens\Fund\TransactionEditScreen;
+use App\Orchid\Screens\PendingRequestScreen;
 use App\Orchid\Screens\PlatformScreen;
 use App\Orchid\Screens\Role\RoleEditScreen;
 use App\Orchid\Screens\Role\RoleListScreen;
@@ -157,3 +158,9 @@ Route::screen('/owned-baskets', OwnedBasketScreen::class)
     ->breadcrumbs(fn($trail) => $trail
         ->parent('platform.index')
         ->push(__('Owned Baskets'), route('platform.owned-baskets')));
+
+Route::screen('pending-request', PendingRequestScreen::class)
+    ->name('platform.systems.pending.requests')
+    ->breadcrumbs(fn($trail) => $trail
+        ->parent('platform.index')
+        ->push(__('Pending Requests'), route('platform.systems.pending.requests')));
