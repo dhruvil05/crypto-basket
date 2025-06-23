@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Orchid\Screen\AsSource;
 
 class BasketPurchase extends Model
 {
-    use HasFactory, AsSource;
+    use HasFactory, AsSource, SoftDeletes;
 
     protected $fillable = [
         'user_id',
@@ -22,6 +23,8 @@ class BasketPurchase extends Model
         'snapshot' => 'array',
         'amount'   => 'decimal:8',
     ];
+
+    protected $dates = ['deleted_at'];
 
     // 🔁 Relationships
 

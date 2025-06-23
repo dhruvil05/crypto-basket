@@ -21,6 +21,7 @@ return new class extends Migration
             $table->enum('status', ['pending', 'completed', 'cancelled'])->default('completed');
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

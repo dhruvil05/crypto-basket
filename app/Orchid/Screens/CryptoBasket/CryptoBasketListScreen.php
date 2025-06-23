@@ -25,6 +25,7 @@ class CryptoBasketListScreen extends Screen
     public function query(): iterable
     {
         $cryptoBaskets = CryptoBasket::with('items')->latest()->paginate(5);
+        
         return [
             'cryptoBaskets' => $cryptoBaskets,
         ];
@@ -85,19 +86,28 @@ class CryptoBasketListScreen extends Screen
 
     public function buyBasket(Request $request)
     {
-        $basketId = $request->input('basket_id');
-        $amount = $request->input('amount');
-        $user = auth()->user();
+        $basketId = $request?->input('basket_id');
+        $amount = $request?->input('amount');
+        $user = auth()?->user();
 
         // Validate the basket ID and amount
         $request->validate([
             'basket_id' => 'required|exists:crypto_baskets,id',
-            'amount' => 'required|numeric|min:0',
+            'amount' => 'required|numeric|min:1',
         ]);
 
-        $snapshot = CryptoBasket::with(['items' => function ($q) {
-            $q->select('crypto_basket_id', 'symbol', 'percentage'); // adjust fields as needed
-        }])->findOrFail($basketId)->toArray();
+        $basket = CryptoBasket::with('items')->findOrFail($basketId);
+        $snapshot = [
+            'id' => $basket->id,
+            'name' => $basket->name,
+            'items' => $basket->items->map(function ($item) {
+                // Get current price from CoinGecko or your own service
+                return [
+                    'symbol' => $item->symbol,
+                    'percentage' => (float) $item->percentage,
+                ];
+            })->toArray(),
+        ];
 
         $wallet = Wallet::where('user_id', $user->id)->first();
 
@@ -119,9 +129,6 @@ class CryptoBasketListScreen extends Screen
         $walletTransaction->note = 'Purchased crypto basket: ' . $snapshot['name'];
         $walletTransaction->save();
 
-
-        
-        
         // Process the investment (store in DB, etc.)
         BasketPurchase::create([
             'user_id' => $user->id,

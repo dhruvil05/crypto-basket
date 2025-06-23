@@ -6,16 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{ env('APP_NAME') }}</title>
-    
+
     @include('layout.header')
 </head>
 
 <body>
     @include('layout.navbar')
 
-    <div class= "container">
-        @yield('content')
-    </div>
+    @yield('content')
 
     @include('layout.footer')
 

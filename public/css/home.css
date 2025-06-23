@@ -602,7 +602,7 @@ h2 {
 .per-page-selector label {
     margin-right: 10px;
     font-weight: bold;
-    color: #333;
+    /* color: #333; */
 }
 
 .per-page-select {
