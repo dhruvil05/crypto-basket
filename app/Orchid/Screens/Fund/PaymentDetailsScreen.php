@@ -61,14 +61,21 @@ class PaymentDetailsScreen extends Screen
         return [
             Layout::view('orchid.funds.payment_details'),
             Layout::modal('confirmPaymentModal', Layout::rows([
+                Input::make('amount')
+                    ->title('Amount')
+                    ->type('number')
+                    ->placeholder('Enter the amount you transferred')
+                    ->required(),
+
+                Input::make('utr_number')
+                    ->title('UTR / Transaction ID')
+                    ->required(),
+
                 Upload::make('payment_screenshot')
                     ->title('Payment Screenshot')
                     ->maxFiles(1)
                     ->acceptedFiles('image/*'),
 
-                Input::make('utr_number')
-                    ->title('UTR / Transaction ID')
-                    ->required(),
             ]))->title('Confirm Payment')
                 ->applyButton('Submit'),
         ];
@@ -77,6 +84,7 @@ class PaymentDetailsScreen extends Screen
     public function confirmPayment(Request $request)
     {
         $request->validate([
+            'amount' => 'required|numeric|min:1',
             'payment_screenshot' => 'required|array',
             'payment_screenshot.0' => 'required|integer|exists:attachments,id',
             'utr_number' => 'required|string',
@@ -90,7 +98,7 @@ class PaymentDetailsScreen extends Screen
 
             WalletTransaction::create([
                 'user_id' => auth()->user()->id,
-                'amount' => 1000, // Replace with the actual amount
+                'amount' => $request->input('amount'),
                 'type' => 'deposit',
                 'status' => 'pending',
                 'source' => 'manual',

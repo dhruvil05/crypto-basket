@@ -29,6 +29,7 @@ class FundScreen extends Screen
             $this->balance = 0;
         }
         $walletTransactions = WalletTransaction::where('user_id', auth()->user()?->id)
+            ->whereNotNull('status')
             ->latest()
             ->paginate(5);
 

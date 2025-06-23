@@ -89,13 +89,14 @@
             </div>
 
             <div class="table-container">
-                
+
 
                 <table class="table crypto-table" id="crypto-table">
                     <thead>
                         <tr>
                             <th>Rank</th>
                             <th>Name</th>
+                            <th>Symbol</th>
                             <th>Price</th>
                             <th>24h Change</th>
                             <th>Market Cap</th>
@@ -130,162 +131,164 @@
 
 @section('scripts')
     <script>
-    const binanceSocket = 'wss://stream.binance.com:9443/ws/!ticker@arr';
-    const coinMap = @json($coinMap); // Provided from your controller
-    const prices = {}; // Stores all incoming crypto data
-    let filteredAndSortedData = []; // Data after search and before pagination
-    let currentPage = 1;
-    let itemsPerPage = 10; // Default items per page, matching HTML default selected option
-    let currentSort = 'market_cap'; // Default sort key
-    let sortDirection = 'desc'; // Default sort direction (descending for market_cap)
+        const binanceSocket = 'wss://stream.binance.com:9443/ws/!ticker@arr';
+        const coinMap = @json($coinMap); // Provided from your controller
+        const prices = {}; // Stores all incoming crypto data
+        let filteredAndSortedData = []; // Data after search and before pagination
+        let currentPage = 1;
+        let itemsPerPage = 10; // Default items per page, matching HTML default selected option
+        let currentSort = 'market_cap'; // Default sort key
+        let sortDirection = 'desc'; // Default sort direction (descending for market_cap)
 
-    // Elements
-    const cryptoBody = document.getElementById('crypto-body');
-    const cryptoSearchInput = document.getElementById('cryptoSearch'); // Corrected ID
-    const perPageSelect = document.getElementById('perPage'); // Corrected ID
-    const paginationContainer = document.getElementById('pagination');
-    const noResultsDiv = document.getElementById('noResults');
-    const loaderElement = document.getElementById('loader'); // Assuming you have a loader div
-    const cryptoTable = document.getElementById('crypto-table'); // Assuming you want to hide/show table
+        // Elements
+        const cryptoBody = document.getElementById('crypto-body');
+        const cryptoSearchInput = document.getElementById('cryptoSearch'); // Corrected ID
+        const perPageSelect = document.getElementById('perPage'); // Corrected ID
+        const paginationContainer = document.getElementById('pagination');
+        const noResultsDiv = document.getElementById('noResults');
+        const loaderElement = document.getElementById('loader'); // Assuming you have a loader div
+        const cryptoTable = document.getElementById('crypto-table'); // Assuming you want to hide/show table
 
-    // --- WebSocket Connection ---
-    function connectWebSocket() {
-        const ws = new WebSocket(binanceSocket);
+        // --- WebSocket Connection ---
+        function connectWebSocket() {
+            const ws = new WebSocket(binanceSocket);
 
-        ws.onopen = () => {
-            console.log('WebSocket connected.');
-            // Assuming 'error-msg' is for general connection errors
-            const errorMsgElement = document.getElementById('error-msg');
-            if (errorMsgElement) {
-                errorMsgElement.classList.add('d-none');
+            ws.onopen = () => {
+                console.log('WebSocket connected.');
+                // Assuming 'error-msg' is for general connection errors
+                const errorMsgElement = document.getElementById('error-msg');
+                if (errorMsgElement) {
+                    errorMsgElement.classList.add('d-none');
+                }
+                if (loaderElement) {
+                    loaderElement.classList.add('d-none'); // Hide loader on successful connection
+                }
+                if (cryptoTable) {
+                    cryptoTable.classList.remove('d-none'); // Show table once connected
+                }
+            };
+
+            ws.onmessage = (event) => {
+                const updates = JSON.parse(event.data);
+                updates.forEach(coin => {
+                    const symbol = coin.s;
+                    const baseSymbol = symbol.replace('USDT', ''); // e.g., BTCUSDT -> BTC
+
+                    if (coinMap[baseSymbol]) {
+                        // Update or add coin data
+                        prices[symbol] = {
+                            symbol: baseSymbol, // Use base symbol for easier mapping to CoinGecko data
+                            fullSymbol: symbol, // Keep full symbol if needed elsewhere
+                            name: coinMap[baseSymbol].name,
+                            logo: coinMap[baseSymbol].logo,
+                            market_cap: parseFloat(coinMap[baseSymbol].market_cap ||
+                                0), // Ensure it's a number, default to 0
+                            price: parseFloat(coin.c),
+                            change: parseFloat(coin.P),
+                            volume: parseFloat(coin.q),
+                        };
+                    }
+                });
+                // Every time new data arrives, re-filter, re-sort, and re-paginate
+                updateTableData();
+            };
+
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                const errorMsgElement = document.getElementById('error-msg');
+                if (errorMsgElement) {
+                    errorMsgElement.classList.remove('d-none');
+                }
+            };
+
+            ws.onclose = (event) => {
+                console.warn('WebSocket closed:', event.code, event.reason);
+                // Reconnect after a delay if connection is closed unexpectedly
+                setTimeout(connectWebSocket, 3000);
+            };
+        }
+
+        // --- Data Processing and Rendering ---
+        function updateTableData() {
+            let data = Object.values(prices); // Get all current crypto data
+
+            // 1. Search Filtering
+            const search = cryptoSearchInput.value.toLowerCase(); // Use cryptoSearchInput
+            if (search) {
+                data = data.filter(c =>
+                    c.name.toLowerCase().includes(search) ||
+                    c.symbol.toLowerCase().includes(search) ||
+                    c.fullSymbol.toLowerCase().includes(search) // Also search full symbol like BTCUSDT
+                );
             }
-            if (loaderElement) {
-                loaderElement.classList.add('d-none'); // Hide loader on successful connection
-            }
-            if (cryptoTable) {
-                cryptoTable.classList.remove('d-none'); // Show table once connected
-            }
-        };
 
-        ws.onmessage = (event) => {
-            const updates = JSON.parse(event.data);
-            updates.forEach(coin => {
-                const symbol = coin.s;
-                const baseSymbol = symbol.replace('USDT', ''); // e.g., BTCUSDT -> BTC
+            // Show/hide no results message
+            if (data.length === 0 && search) {
+                noResultsDiv.style.display = 'block';
+                cryptoBody.innerHTML = ''; // Clear table body
+                paginationContainer.innerHTML = ''; // Clear pagination
+                return; // No data to display
+            } else {
+                noResultsDiv.style.display = 'none';
+            }
 
-                if (coinMap[baseSymbol]) {
-                    // Update or add coin data
-                    prices[symbol] = {
-                        symbol: baseSymbol, // Use base symbol for easier mapping to CoinGecko data
-                        fullSymbol: symbol, // Keep full symbol if needed elsewhere
-                        name: coinMap[baseSymbol].name,
-                        logo: coinMap[baseSymbol].logo,
-                        market_cap: parseFloat(coinMap[baseSymbol].market_cap || 0), // Ensure it's a number, default to 0
-                        price: parseFloat(coin.c),
-                        change: parseFloat(coin.P),
-                        volume: parseFloat(coin.q),
-                    };
+            // 2. Sorting
+            data.sort((a, b) => {
+                const valA = a[currentSort];
+                const valB = b[currentSort];
+
+                if (valA === undefined || valB === undefined) {
+                    // Handle cases where a sort key might be missing (e.g., market_cap not available for all)
+                    return 0;
+                }
+
+                if (sortDirection === 'asc') {
+                    return valA - valB;
+                } else {
+                    return valB - valA;
                 }
             });
-            // Every time new data arrives, re-filter, re-sort, and re-paginate
-            updateTableData();
-        };
 
-        ws.onerror = (error) => {
-            console.error('WebSocket error:', error);
-            const errorMsgElement = document.getElementById('error-msg');
-            if (errorMsgElement) {
-                errorMsgElement.classList.remove('d-none');
-            }
-        };
+            filteredAndSortedData = data; // Store for pagination
 
-        ws.onclose = (event) => {
-            console.warn('WebSocket closed:', event.code, event.reason);
-            // Reconnect after a delay if connection is closed unexpectedly
-            setTimeout(connectWebSocket, 3000);
-        };
-    }
-
-    // --- Data Processing and Rendering ---
-    function updateTableData() {
-        let data = Object.values(prices); // Get all current crypto data
-
-        // 1. Search Filtering
-        const search = cryptoSearchInput.value.toLowerCase(); // Use cryptoSearchInput
-        if (search) {
-            data = data.filter(c =>
-                c.name.toLowerCase().includes(search) ||
-                c.symbol.toLowerCase().includes(search) ||
-                c.fullSymbol.toLowerCase().includes(search) // Also search full symbol like BTCUSDT
-            );
+            // 3. Pagination
+            paginateData(); // Call paginateData to render the current page
         }
 
-        // Show/hide no results message
-        if (data.length === 0 && search) {
-            noResultsDiv.style.display = 'block';
-            cryptoBody.innerHTML = ''; // Clear table body
-            paginationContainer.innerHTML = ''; // Clear pagination
-            return; // No data to display
-        } else {
-            noResultsDiv.style.display = 'none';
+
+        function paginateData() {
+            const totalPages = Math.ceil(filteredAndSortedData.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginated = filteredAndSortedData.slice(startIndex, endIndex);
+
+            renderTable(paginated);
+            renderPagination(totalPages);
         }
 
-        // 2. Sorting
-        data.sort((a, b) => {
-            const valA = a[currentSort];
-            const valB = b[currentSort];
+        function renderTable(dataToRender) {
+            cryptoBody.innerHTML = ''; // Clear existing rows
 
-            if (valA === undefined || valB === undefined) {
-                // Handle cases where a sort key might be missing (e.g., market_cap not available for all)
-                return 0;
+            if (dataToRender.length === 0) {
+                // This case is already handled in updateTableData for search results
+                return;
             }
 
-            if (sortDirection === 'asc') {
-                return valA - valB;
-            } else {
-                return valB - valA;
-            }
-        });
+            let rankOffset = (currentPage - 1) * itemsPerPage; // Calculate rank based on current page
+            dataToRender.forEach((coin, index) => {
+                const rank = rankOffset + index + 1; // Rank is 1-based index on the current page
 
-        filteredAndSortedData = data; // Store for pagination
+                // Determine text color for 24h Change
+                const changeClass = coin.change >= 0 ? 'text-success' : 'text-danger';
 
-        // 3. Pagination
-        paginateData(); // Call paginateData to render the current page
-    }
+                // Format numbers for display
+                const formattedPrice = `$${coin.price.toFixed(2)}`;
+                const formattedChange = `${coin.change.toFixed(2)}%`;
+                const formattedVolume = `$${(coin.volume / 1e9).toFixed(2)}B`; // Billions
+                const formattedMarketCap = coin.market_cap ? `$${(coin.market_cap / 1e12).toFixed(2)}T` :
+                    'N/A'; // Trillions, handle missing market_cap
 
-
-    function paginateData() {
-        const totalPages = Math.ceil(filteredAndSortedData.length / itemsPerPage);
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
-        const paginated = filteredAndSortedData.slice(startIndex, endIndex);
-
-        renderTable(paginated);
-        renderPagination(totalPages);
-    }
-
-    function renderTable(dataToRender) {
-        cryptoBody.innerHTML = ''; // Clear existing rows
-
-        if (dataToRender.length === 0) {
-            // This case is already handled in updateTableData for search results
-            return;
-        }
-
-        let rankOffset = (currentPage - 1) * itemsPerPage; // Calculate rank based on current page
-        dataToRender.forEach((coin, index) => {
-            const rank = rankOffset + index + 1; // Rank is 1-based index on the current page
-
-            // Determine text color for 24h Change
-            const changeClass = coin.change >= 0 ? 'text-success' : 'text-danger';
-
-            // Format numbers for display
-            const formattedPrice = `$${coin.price.toFixed(2)}`;
-            const formattedChange = `${coin.change.toFixed(2)}%`;
-            const formattedVolume = `$${(coin.volume / 1e9).toFixed(2)}B`; // Billions
-            const formattedMarketCap = coin.market_cap ? `$${(coin.market_cap / 1e12).toFixed(2)}T` : 'N/A'; // Trillions, handle missing market_cap
-
-            const row = `
+                const row = `
                 <tr>
                     <td>${rank}</td>
                     <td class="coin-name-col">
@@ -295,132 +298,132 @@
                     <td>${coin.fullSymbol}</td> <td>${formattedPrice}</td>
                     <td class="${changeClass}">${formattedChange}</td>
                     <td>${formattedMarketCap}</td>
+                    <td>${formattedVolume}</td>
                 </tr>
             `;
-            cryptoBody.insertAdjacentHTML('beforeend', row);
-        });
-    }
-
-
-    function renderPagination(totalPages) {
-        paginationContainer.innerHTML = ''; // Clear existing pagination
-
-        if (totalPages <= 1) {
-            return; // No need for pagination if only one page
-        }
-
-        const createPaginationItem = (text, page, isActive = false, isDisabled = false) => {
-            const li = document.createElement('li');
-            li.className = 'page-item';
-            if (isActive) li.classList.add('active');
-            if (isDisabled) li.classList.add('disabled');
-
-            const a = document.createElement('a');
-            a.className = 'page-link';
-            a.href = '#';
-            a.innerHTML = text;
-
-            if (!isDisabled) {
-                a.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    currentPage = page;
-                    paginateData();
-                });
-            }
-            li.appendChild(a);
-            return li;
-        };
-
-        // Previous button
-        paginationContainer.appendChild(createPaginationItem('‹', currentPage - 1, false, currentPage === 1));
-
-        // Page numbers
-        const maxPagesToShow = 7; // Max number of page buttons to display
-        let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
-        let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
-
-        if (endPage - startPage + 1 < maxPagesToShow) {
-            startPage = Math.max(1, endPage - maxPagesToShow + 1);
-        }
-
-        if (startPage > 1) {
-            paginationContainer.appendChild(createPaginationItem('1', 1));
-            if (startPage > 2) {
-                const liDots = document.createElement('li');
-                liDots.className = 'page-item disabled';
-                liDots.innerHTML = '<span class="page-link">...</span>';
-                paginationContainer.appendChild(liDots);
-            }
-        }
-
-        for (let i = startPage; i <= endPage; i++) {
-            paginationContainer.appendChild(createPaginationItem(i, i, i === currentPage));
-        }
-
-        if (endPage < totalPages) {
-            if (endPage < totalPages - 1) {
-                const liDots = document.createElement('li');
-                liDots.className = 'page-item disabled';
-                liDots.innerHTML = '<span class="page-link">...</span>';
-                paginationContainer.appendChild(liDots);
-            }
-            paginationContainer.appendChild(createPaginationItem(totalPages, totalPages));
+                cryptoBody.insertAdjacentHTML('beforeend', row);
+            });
         }
 
 
-        // Next button
-        paginationContainer.appendChild(createPaginationItem('›', currentPage + 1, false, currentPage === totalPages));
-    }
+        function renderPagination(totalPages) {
+            paginationContainer.innerHTML = ''; // Clear existing pagination
 
-
-    // --- Event Listeners ---
-    cryptoSearchInput.addEventListener('input', () => {
-        currentPage = 1; // Reset to first page on new search
-        updateTableData();
-    });
-
-    perPageSelect.addEventListener('change', (e) => {
-        itemsPerPage = parseInt(e.target.value);
-        currentPage = 1; // Reset to first page when items per page changes
-        updateTableData();
-    });
-
-    // Add event listeners for sortable headers
-    document.querySelectorAll('.sortable').forEach(header => {
-        header.addEventListener('click', () => {
-            const sortKey = header.dataset.sort;
-
-            // Toggle sort direction if clicking the same column
-            if (currentSort === sortKey) {
-                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-            } else {
-                currentSort = sortKey;
-                sortDirection = 'desc'; // Default to descending for new sort column
+            if (totalPages <= 1) {
+                return; // No need for pagination if only one page
             }
 
-            // Remove existing sort indicators
-            document.querySelectorAll('.sortable').forEach(h => h.classList.remove('asc', 'desc'));
+            const createPaginationItem = (text, page, isActive = false, isDisabled = false) => {
+                const li = document.createElement('li');
+                li.className = 'page-item';
+                if (isActive) li.classList.add('active');
+                if (isDisabled) li.classList.add('disabled');
 
-            // Add new sort indicator
-            header.classList.add(sortDirection);
+                const a = document.createElement('a');
+                a.className = 'page-link';
+                a.href = '#';
+                a.innerHTML = text;
 
-            currentPage = 1; // Reset to first page on sort change
+                if (!isDisabled) {
+                    a.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        currentPage = page;
+                        paginateData();
+                    });
+                }
+                li.appendChild(a);
+                return li;
+            };
+
+            // Previous button
+            paginationContainer.appendChild(createPaginationItem('‹', currentPage - 1, false, currentPage === 1));
+
+            // Page numbers
+            const maxPagesToShow = 7; // Max number of page buttons to display
+            let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+            let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+
+            if (endPage - startPage + 1 < maxPagesToShow) {
+                startPage = Math.max(1, endPage - maxPagesToShow + 1);
+            }
+
+            if (startPage > 1) {
+                paginationContainer.appendChild(createPaginationItem('1', 1));
+                if (startPage > 2) {
+                    const liDots = document.createElement('li');
+                    liDots.className = 'page-item disabled';
+                    liDots.innerHTML = '<span class="page-link">...</span>';
+                    paginationContainer.appendChild(liDots);
+                }
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                paginationContainer.appendChild(createPaginationItem(i, i, i === currentPage));
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    const liDots = document.createElement('li');
+                    liDots.className = 'page-item disabled';
+                    liDots.innerHTML = '<span class="page-link">...</span>';
+                    paginationContainer.appendChild(liDots);
+                }
+                paginationContainer.appendChild(createPaginationItem(totalPages, totalPages));
+            }
+
+
+            // Next button
+            paginationContainer.appendChild(createPaginationItem('›', currentPage + 1, false, currentPage === totalPages));
+        }
+
+
+        // --- Event Listeners ---
+        cryptoSearchInput.addEventListener('input', () => {
+            currentPage = 1; // Reset to first page on new search
             updateTableData();
         });
-    });
 
-    // --- Initial Call ---
-    // Start WebSocket connection when the page loads
-    document.addEventListener('DOMContentLoaded', () => {
-        // Hide table and show loader initially
-        if (loaderElement) {
-            loaderElement.classList.remove('d-none');
-        }
-        if (cryptoTable) {
-            cryptoTable.classList.add('d-none');
-        }
-        connectWebSocket();
-    });
+        perPageSelect.addEventListener('change', (e) => {
+            itemsPerPage = parseInt(e.target.value);
+            currentPage = 1; // Reset to first page when items per page changes
+            updateTableData();
+        });
 
-</script>
+        // Add event listeners for sortable headers
+        document.querySelectorAll('.sortable').forEach(header => {
+            header.addEventListener('click', () => {
+                const sortKey = header.dataset.sort;
+
+                // Toggle sort direction if clicking the same column
+                if (currentSort === sortKey) {
+                    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+                } else {
+                    currentSort = sortKey;
+                    sortDirection = 'desc'; // Default to descending for new sort column
+                }
+
+                // Remove existing sort indicators
+                document.querySelectorAll('.sortable').forEach(h => h.classList.remove('asc', 'desc'));
+
+                // Add new sort indicator
+                header.classList.add(sortDirection);
+
+                currentPage = 1; // Reset to first page on sort change
+                updateTableData();
+            });
+        });
+
+        // --- Initial Call ---
+        // Start WebSocket connection when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Hide table and show loader initially
+            if (loaderElement) {
+                loaderElement.classList.remove('d-none');
+            }
+            if (cryptoTable) {
+                cryptoTable.classList.add('d-none');
+            }
+            connectWebSocket();
+        });
+    </script>
 @endsection
