@@ -50,6 +50,7 @@ class HomeController extends Controller
             $coinMap = collect();
         }
 
-        return view('vendor.platform.home', ['coinMap' => $coinMap]);
+        // return view('vendor.platform.home', ['coinMap' => $coinMap]);
+        return view('layout.home', ['coinMap' => $coinMap]);
     }
 }

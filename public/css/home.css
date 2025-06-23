@@ -1,0 +1,793 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #000;
+    color: #fff;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header */
+header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    border-bottom: 1px solid #333;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+
+.nav-links a {
+    color: #ccc;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-links a:hover {
+    color: #fff;
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #fff;
+    transition: width 0.3s ease;
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}
+
+.cta-button {
+    background: #fff;
+    color: #000;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.cta-button:hover {
+    background: #f0f0f0;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+}
+
+/* Hero Section */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #000 0%, #111 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+}
+
+.hero-content {
+    text-align: center;
+    z-index: 2;
+    position: relative;
+}
+
+.hero h1 {
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #fff 0%, #ccc 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: fadeInUp 1s ease-out;
+}
+
+.hero p {
+    font-size: 1.25rem;
+    color: #ccc;
+    margin-bottom: 2.5rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    animation: fadeInUp 1s ease-out 0.2s both;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fadeInUp 1s ease-out 0.4s both;
+}
+
+.btn-primary {
+    background: #fff;
+    color: #000;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary:hover {
+    background: #f0f0f0;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #fff;
+    padding: 1rem 2rem;
+    border: 2px solid #fff;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-secondary:hover {
+    background: #fff;
+    color: #000;
+    transform: translateY(-3px);
+}
+
+/* Features Section */
+.features {
+    padding: 8rem 0;
+    background: #fff;
+    color: #000;
+}
+
+.features h2 {
+    text-align: center;
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 3rem;
+    color: #000;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem;
+    margin-top: 4rem;
+}
+
+.feature-card {
+    text-align: center;
+    padding: 2rem;
+    border-radius: 20px;
+    border: 1px solid #eee;
+    transition: all 0.3s ease;
+    background: #fafafa;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border-color: #ddd;
+}
+
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    background: #000;
+    border-radius: 50%;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: #fff;
+}
+
+.feature-card h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #000;
+}
+
+.feature-card p {
+    color: #666;
+    line-height: 1.6;
+}
+
+/* Stats Section */
+.stats {
+    padding: 6rem 0;
+    background: #000;
+    color: #fff;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    text-align: center;
+}
+
+.stat-item h3 {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.stat-item p {
+    color: #ccc;
+    font-size: 1.1rem;
+}
+
+/* Crypto Table Section */
+.crypto-table-section {
+    padding: 8rem 0;
+    background: #111;
+    color: #fff;
+}
+
+.crypto-table-section h2 {
+    text-align: center;
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #fff;
+}
+
+.section-subtitle {
+    text-align: center;
+    font-size: 1.25rem;
+    color: #ccc;
+    margin-bottom: 3rem;
+}
+
+/* Search and Controls */
+.table-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.search-container {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    background: #000;
+    border: 2px solid #333;
+    border-radius: 25px;
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: #fff;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+.search-input::placeholder {
+    color: #666;
+}
+
+.search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.per-page-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #ccc;
+}
+
+.per-page-select {
+    background: #000;
+    border: 2px solid #333;
+    border-radius: 8px;
+    color: #fff;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    outline: none;
+    cursor: pointer;
+}
+
+.per-page-select:focus {
+    border-color: #fff;
+}
+
+
+
+/* CTA Section */
+.cta-section {
+    padding: 8rem 0;
+    background: #fff;
+    color: #000;
+    text-align: center;
+}
+
+.cta-section h2 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #000;
+}
+
+.cta-section p {
+    font-size: 1.25rem;
+    color: #666;
+    margin-bottom: 2.5rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Footer */
+footer {
+    background: #000;
+    color: #fff;
+    padding: 3rem 0 1rem;
+    border-top: 1px solid #333;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.footer-section h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #fff;
+}
+
+.footer-section a {
+    color: #ccc;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 0.5rem;
+    transition: color 0.3s ease;
+}
+
+.footer-section a:hover {
+    color: #fff;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid #333;
+    color: #666;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .crypto-table-section {
+        padding: 4rem 0;
+    }
+
+    .table-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-container {
+        max-width: none;
+    }
+
+    .per-page-selector {
+        justify-content: center;
+    }
+
+    .table-container {
+        overflow-x: auto;
+        border-radius: 10px;
+    }
+
+    .crypto-table {
+        min-width: 600px;
+    }
+
+    .crypto-table th,
+    .crypto-table td {
+        padding: 1rem 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .crypto-table th {
+        font-size: 0.8rem;
+    }
+
+    .crypto-symbol {
+        font-size: 0.9rem;
+    }
+
+    .crypto-full-name {
+        font-size: 0.8rem;
+    }
+
+    .price {
+        font-size: 1rem;
+    }
+
+    .change {
+        font-size: 0.8rem;
+        padding: 0.2rem 0.5rem;
+    }
+
+    .pagination {
+        gap: 0.25rem;
+    }
+
+    .pagination-button {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+        min-width: 35px;
+    }
+
+    .pagination-info {
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+        text-align: center;
+        width: 100%;
+    }
+}
+
+/* Basic styles for the table and controls (you might have these in your main CSS) */
+.crypto-table-section {
+    padding: 40px 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.section-subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.table-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    /* Allow wrapping on smaller screens */
+    gap: 15px;
+    /* Space between items */
+}
+
+.search-container {
+    position: relative;
+    flex-grow: 1;
+    /* Allow search input to take more space */
+    max-width: 400px;
+    /* Limit max width of search */
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 10px 10px 35px;
+    /* Add padding for icon */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+}
+
+.per-page-selector label {
+    margin-right: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+.per-page-select {
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    /* background-color: #fff; */
+    cursor: pointer;
+}
+
+.table-container {
+    overflow-x: auto;
+    /* Enable horizontal scrolling for small screens */
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.crypto-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+    /* Ensure minimum width for better display */
+}
+
+.crypto-table th,
+.crypto-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.crypto-table thead th {
+    background-color: #f8f8f8;
+    font-weight: bold;
+    color: #555;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    cursor: pointer;
+    /* Indicate sortable columns */
+}
+
+.crypto-table tbody tr:hover {
+    background-color: #f5f5f5;
+    /* Highlight row on hover */
+    color: #333;
+    
+}
+
+.crypto-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Column specific styles */
+.coin-name-col {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.coin-logo {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: contain;
+}
+
+/* Text colors for change */
+.text-success {
+    color: #28a745;
+    /* Green */
+}
+
+.text-danger {
+    color: #dc3545;
+    /* Red */
+}
+
+/* Pagination styles */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+    list-style: none;
+    padding: 0;
+}
+
+.pagination .page-item {
+    margin: 0 5px;
+}
+
+.pagination .page-link {
+    display: block;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    color: #007bff;
+    text-decoration: none;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.pagination .page-link:hover:not(.disabled) {
+    background-color: #e9ecef;
+    color: #0056b3;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #f8f9fa;
+}
+
+.pagination .page-item span.page-link {
+    /* For "..." */
+    background-color: transparent;
+    border-color: transparent;
+    color: #6c757d;
+    cursor: default;
+}
+
+/* Sort indicators */
+.sortable {
+    position: relative;
+    padding-right: 25px;
+    /* Make space for the arrow */
+}
+
+.sortable::after {
+    content: '';
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 4px solid transparent;
+    opacity: 0.3;
+    /* Faded arrow by default */
+}
+
+.sortable.asc::after {
+    border-bottom-color: #555;
+    /* Up arrow */
+    opacity: 1;
+}
+
+.sortable.desc::after {
+    border-top-color: #555;
+    /* Down arrow */
+    opacity: 1;
+}
+
+/* Loader and No Results */
+.d-none {
+    display: none !important;
+}
+
+.no-results {
+    text-align: center;
+    padding: 30px;
+    color: #666;
+    font-size: 1.1rem;
+}
+
+#loader {
+    text-align: center;
+    padding: 50px;
+    font-size: 1.2rem;
+    color: #007bff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .table-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-container {
+        max-width: 100%;
+    }
+}

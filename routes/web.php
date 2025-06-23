@@ -7,7 +7,8 @@ use App\Orchid\Screens\ReferralSettingsScreen;
 
 Route::get('/register', function () {
     return view('auth.register');
-});
+})->name('platform.register');
+
 Route::post('/register', [RegisterController::class, 'register'])->name('platform.register.auth');
 
 Route::screen('/referral/settings', ReferralSettingsScreen::class)
