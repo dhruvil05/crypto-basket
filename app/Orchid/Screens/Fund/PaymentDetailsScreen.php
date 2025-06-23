@@ -98,7 +98,7 @@ class PaymentDetailsScreen extends Screen
 
             WalletTransaction::create([
                 'user_id' => auth()->user()->id,
-                'amount' => $request->input('amount'),
+                'amount' => $request->get('amount'),
                 'type' => 'deposit',
                 'status' => 'pending',
                 'source' => 'manual',

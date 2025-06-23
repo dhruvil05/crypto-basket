@@ -14,6 +14,7 @@ use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Layout;
 use App\Events\WalletDepositRejected;
+use App\Models\ReferralSetting;
 
 class TransactionEditScreen extends Screen
 {
@@ -25,18 +26,18 @@ class TransactionEditScreen extends Screen
      * @return array
      */
     public function query(): iterable
-    {   
+    {
         $user = Auth::user();
-        
-        if($user && $user->inRole('admin')){
+
+        if ($user && $user->inRole('admin')) {
             $userID = request()->get('transaction');
-        }else{
+        } else {
             $userID = $user?->id;
         }
 
         $this->transaction = WalletTransaction::where('id', request()->route('transaction'))
-        ->first();
-        
+            ->first();
+
         $this->wallet = Wallet::where('user_id', $userID)->first();
 
         return [
@@ -107,25 +108,30 @@ class TransactionEditScreen extends Screen
 
     public function transactionStatus(Request $request)
     {
+
         $status = $request->get('transaction')['status'];
-        $request->validate([
-            'transaction.status' => 'required|in:approved,rejected,pending', // adjust statuses as needed
-            'transaction.admin_comment' => $status === 'rejected' ? 'required|string|min:3' : 'nullable',
-        ], 
-        [
-            'transaction.admin_comment.required' => __('Admin comment is required for rejection.'),
-            'transaction.admin_comment.min' => __('Admin comment must be at least 3 characters long.'),
-        ]);
+        $request->validate(
+            [
+                'transaction.status' => 'required|in:approved,rejected,pending', // adjust statuses as needed
+                'transaction.admin_comment' => $status === 'rejected' ? 'required|string|min:3' : 'nullable',
+            ],
+            [
+                'transaction.admin_comment.required' => __('Admin comment is required for rejection.'),
+                'transaction.admin_comment.min' => __('Admin comment must be at least 3 characters long.'),
+            ]
+        );
 
         $transactionId = request()->route('transaction');
 
         $transaction = WalletTransaction::find($transactionId);
 
+
+
         if ($transaction) {
             $oldStatus = $transaction->status;
 
             $wallet = Wallet::where('user_id', $transaction->user_id)->first();
-            // check if the wallet exists
+
             if (!$wallet) {
                 Wallet::create([
                     'user_id' => $transaction->user_id,
@@ -139,6 +145,28 @@ class TransactionEditScreen extends Screen
                 if ($wallet) {
                     $wallet->balance += $transaction->amount;
                     $wallet->save();
+
+                    $userReferral = $transaction->user?->referred_by;
+
+                    if (!empty($userReferral)) {
+                        $referralPercent = ReferralSetting::pluck('referee_reward');
+
+                        $rewardAmount = $transaction->amount * ($referralPercent->first() / 100);
+
+                        $referral = WalletTransaction::create([
+                            'user_id' => $userReferral,
+                            'amount' => $rewardAmount,
+                            'type' => 'credit',
+                            'source' => 'referral',
+                            'status' => 'approved',
+                            'reference_id' => $transaction->id,
+                            'status' => 'approved',
+                        ]);
+
+                        if ($referral) {
+                            Wallet::where('user_id', $userReferral)->increment('balance', $rewardAmount);
+                        }
+                    }
 
                     $transaction->amount_added = true; // Set the flag to true
                     Toast::success(__('Transaction approved and amount added to wallet.'));
