@@ -295,7 +295,8 @@
                         <img src="${coin.logo}" alt="${coin.name} logo" class="coin-logo">
                         <strong>${coin.name}</strong>
                     </td>
-                    <td>${coin.fullSymbol}</td> <td>${formattedPrice}</td>
+                    <td>${coin.symbol}</td> 
+                    <td>${formattedPrice}</td>
                     <td class="${changeClass}">${formattedChange}</td>
                     <td>${formattedMarketCap}</td>
                     <td>${formattedVolume}</td>
