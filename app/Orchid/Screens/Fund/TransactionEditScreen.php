@@ -13,6 +13,7 @@ use Orchid\Support\Facades\Toast;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Layout;
+use App\Events\WalletDepositRejected;
 
 class TransactionEditScreen extends Screen
 {
@@ -100,12 +101,22 @@ class TransactionEditScreen extends Screen
                 ])
                 ->canSee(auth()->user()?->hasAccess('platform.funds.edit')),
 
+            Layout::view('vendor.platform.script.admin_comment_script'),
         ];
     }
 
     public function transactionStatus(Request $request)
     {
         $status = $request->get('transaction')['status'];
+        $request->validate([
+            'transaction.status' => 'required|in:approved,rejected,pending', // adjust statuses as needed
+            'transaction.admin_comment' => $status === 'rejected' ? 'required|string|min:3' : 'nullable',
+        ], 
+        [
+            'transaction.admin_comment.required' => __('Admin comment is required for rejection.'),
+            'transaction.admin_comment.min' => __('Admin comment must be at least 3 characters long.'),
+        ]);
+
         $transactionId = request()->route('transaction');
 
         $transaction = WalletTransaction::find($transactionId);
@@ -141,13 +152,23 @@ class TransactionEditScreen extends Screen
                     $transaction->amount_added = false; // Reset the flag
                     Toast::info(__('Transaction rejected and amount subtracted from wallet.'));
                 }
-            } else{
+            } else {
                 Toast::info(__('Transaction status updated.'));
             }
 
+            $isStatusChangedToRejected = $status === 'rejected' && $oldStatus !== 'rejected';
+
             $transaction->status = $status;
+            $transaction->admin_comment = $status === 'rejected'
+                ? ($request->get('transaction')['admin_comment'] ?? null)
+                : null;
             $transaction->reviewed_by = auth()->user()?->id;
+            $transaction->reviewed_at = now();
             $transaction->save();
+
+            if ($isStatusChangedToRejected) {
+                event(new WalletDepositRejected($transaction));
+            }
 
             Toast::success(__('Transaction status updated successfully.'));
         } else {
@@ -159,7 +180,11 @@ class TransactionEditScreen extends Screen
 
     public function updateTransactionAmount(Request $request)
     {
-        $amount = $request->get('transaction')['amount'];
+        $validated = $request->validate([
+            'transaction.amount' => 'required|numeric|min:1',
+        ]);
+
+        $amount = $validated['transaction']['amount'];
         $transactionId = request()->route('transaction');
         $walletTransaction = WalletTransaction::find($transactionId);
 
