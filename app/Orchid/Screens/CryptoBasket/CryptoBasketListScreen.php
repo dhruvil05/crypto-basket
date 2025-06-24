@@ -24,8 +24,8 @@ class CryptoBasketListScreen extends Screen
      */
     public function query(): iterable
     {
-        $cryptoBaskets = CryptoBasket::with('items')->latest()->paginate(5);
-        
+        $cryptoBaskets = CryptoBasket::with(['items', 'returnCycles'])->latest()->paginate(5);
+
         return [
             'cryptoBaskets' => $cryptoBaskets,
         ];
@@ -66,6 +66,7 @@ class CryptoBasketListScreen extends Screen
         return [
             CryptoBasketListLayout::class,
             Layout::modal('buyBasketModal', BuyBasketLayout::class)
+                ->async('asyncBuyBasketModal')
                 ->title(__('Buy Basket'))
                 ->applyButton(__('Buy'))
                 ->closeButton(__('Close')),
@@ -88,15 +89,42 @@ class CryptoBasketListScreen extends Screen
     {
         $basketId = $request?->input('basket_id');
         $amount = $request?->input('amount');
+        $selectedCycles = array_keys($request->input('return_cycles', []));
         $user = auth()?->user();
 
+        if (!isKycApproved($user->id)) {
+            Toast::error('KYC must be approved to purchase a basket.');
+            return redirect()->route('platform.profile');
+        }
         // Validate the basket ID and amount
         $request->validate([
             'basket_id' => 'required|exists:crypto_baskets,id',
             'amount' => 'required|numeric|min:1',
+            'return_cycles' => 'array',
+            'return_cycles.*' => 'exists:basket_return_cycles,id',
         ]);
 
+        $wallet = Wallet::where('user_id', $user->id)->first();
+
+        if (!$wallet || $wallet->balance < $amount) {
+            Toast::error('Insufficient wallet balance. Please add funds to your wallet.');
+            return redirect()->route('platform.wallet');
+        }
+        
         $basket = CryptoBasket::with('items')->findOrFail($basketId);
+
+        $selectedReturnCycles = $basket->returnCycles
+            ->whereIn('id', $selectedCycles)
+            ->values()
+            ->map(function ($cycle) {
+                return [
+                    'id' => $cycle->id,
+                    'months' => $cycle->months,
+                    'return_percentage' => $cycle->return_percentage,
+                ];
+            })
+            ->toArray();
+
         $snapshot = [
             'id' => $basket->id,
             'name' => $basket->name,
@@ -107,14 +135,8 @@ class CryptoBasketListScreen extends Screen
                     'percentage' => (float) $item->percentage,
                 ];
             })->toArray(),
+            'return_cycles' => $selectedReturnCycles,
         ];
-
-        $wallet = Wallet::where('user_id', $user->id)->first();
-
-        if (!$wallet || $wallet->balance < $amount) {
-            Toast::error('Insufficient wallet balance. Please add funds to your wallet.');
-            return redirect()->route('platform.wallet');
-        }
 
         $wallet->balance -= $amount;
         $wallet->save();
@@ -139,5 +161,15 @@ class CryptoBasketListScreen extends Screen
 
         Toast::success('Investment successful! You have invested ' . $amount . ' in the basket.');
         return redirect()->route('platform.baskets');
+    }
+
+    public function asyncBuyBasketModal(Request $request)
+    {
+        $basket = CryptoBasket::with('returnCycles')->find($request->get('basket_id'));
+
+        return [
+            'basket' => $basket,
+            'returnCycles' => $basket?->returnCycles ?? [],
+        ];
     }
 }

@@ -21,6 +21,10 @@ class UserSeeder extends Seeder
             'platform.systems.attachment' => true,
             'platform.systems.logs' => true,
             'platform.systems.tools' => true,
+            'platform.systems.pending.requests' => true,
+            'platform.owned-baskets' => true,
+            'platform.funds.wallet' => true,
+            'platform.funds.edit' => true,
         ];
 
         User::updateOrInsert([

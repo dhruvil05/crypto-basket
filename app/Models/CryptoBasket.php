@@ -36,4 +36,9 @@ class CryptoBasket extends Model
     {
         return $this->hasMany(BasketPurchase::class);
     }
+
+    public function returnCycles()
+    {
+        return $this->hasMany(BasketReturnCycle::class);
+    }
 }

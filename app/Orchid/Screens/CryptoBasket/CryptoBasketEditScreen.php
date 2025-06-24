@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Http;
 use App\Models\CryptoBasket;
 use App\Models\CryptoBasketItem;
 use Illuminate\Http\Request;
+use Orchid\Screen\Fields\Group;
 
 class CryptoBasketEditScreen extends Screen
 {
@@ -118,7 +119,39 @@ class CryptoBasketEditScreen extends Screen
                     ->title('Basket Name')
                     ->required()
                     ->value($this->cryptoBasket->name ?? ''),
+                
+                Group::make([
+                    Input::make('return_cycles[0][months]')
+                        ->title('Months')
+                        ->readonly()
+                        ->value(3),
+                    Input::make('return_cycles[0][return_percentage]')
+                        ->title('Return %'),
+
+                    Input::make('return_cycles[1][months]')
+                        ->title('Months')
+                        ->readonly()
+                        ->value(6),
+                    Input::make('return_cycles[1][return_percentage]')
+                        ->title('Return %'),
+
+                    Input::make('return_cycles[2][months]')
+                        ->title('Months')
+                        ->readonly()
+                        ->value(9),
+                    Input::make('return_cycles[2][return_percentage]')
+                        ->title('Return %'),
+
+                    Input::make('return_cycles[3][months]')
+                        ->title('Months')
+                        ->readonly()
+                        ->value(12),
+                    Input::make('return_cycles[3][return_percentage]')
+                        ->title('Return %'),
+                ]),
             ]),
+
+
             Layout::view('vendor.platform.partials.crypto-basket-dynamic', [
                 'cryptos' => $this->cryptos ?? [],
                 'selected' => $this->selected ?? [],
@@ -131,8 +164,8 @@ class CryptoBasketEditScreen extends Screen
      */
     public function save(CryptoBasket $cryptoBasket, Request $request)
     {
-        $data = $request->input('basket');
-
+        $data = $request->input(['basket']);
+        $return_cycles = $request->input('return_cycles', []);
         // Validate input
         $validated = $request->validate([
             'basket.name' => 'required|string|max:255',
@@ -140,6 +173,8 @@ class CryptoBasketEditScreen extends Screen
             'basket.percentages' => 'required|array|min:1',
             'basket.coin_ids' => 'required|array|min:1',
             'basket.names' => 'required|array|min:1',
+            'return_cycles.*.months' => 'required|integer',
+            'return_cycles.*.return_percentage' => 'required|numeric|min:0|max:100',
         ]);
 
         // Calculate total percentage
@@ -150,7 +185,7 @@ class CryptoBasketEditScreen extends Screen
             Toast::error('Total percentage must be 100%.');
             return back()->withInput();
         }
-        
+
         // Create or update the basket
         $cryptoBasket->name = $data['name'];
         $cryptoBasket->created_by = $cryptoBasket->created_by ?? auth()->id();
@@ -171,6 +206,16 @@ class CryptoBasketEditScreen extends Screen
                 'name' => $name,
                 'percentage' => $percentage,
             ]);
+        }
+
+        // Save return cycles
+        foreach ($return_cycles as $cycle) {
+            if (isset($cycle['months']) && isset($cycle['return_percentage'])) {
+                $cryptoBasket->returnCycles()->create([
+                    'months' => $cycle['months'],
+                    'return_percentage' => $cycle['return_percentage'],
+                ]);
+            }
         }
 
         Toast::info('Crypto Basket saved!');

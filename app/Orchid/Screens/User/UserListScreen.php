@@ -10,6 +10,9 @@ use App\Orchid\Layouts\User\UserListLayout;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\User;
+use App\Models\Wallet;
+use App\Models\WalletTransaction;
+use App\Orchid\Layouts\User\UserAddFundLayout;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Layout;
@@ -82,6 +85,12 @@ class UserListScreen extends Screen
 
             Layout::modal('editUserModal', UserEditLayout::class)
                 ->deferred('loadUserOnOpenModal'),
+
+            Layout::modal('addFundsModal', UserAddFundLayout::class)
+                ->deferred('loadUserOnOpenModal')
+                ->title(__('Add Funds'))
+                ->applyButton(__('Add Funds'))
+                ->closeButton(__('Close')),
         ];
     }
 
@@ -90,7 +99,7 @@ class UserListScreen extends Screen
      *
      * @return array
      */
-    public function loadUserOnOpenModal(User $user): iterable
+    public function loadUserOnOpenModal(User $user): array
     {
         return [
             'user' => $user,
@@ -116,5 +125,40 @@ class UserListScreen extends Screen
         User::findOrFail($request->get('id'))->delete();
 
         Toast::info(__('User was removed'));
+    }
+
+    public function addFunds(Request $request, User $user): void
+    {
+        $request->validate([
+            'funds' => 'required|numeric|min:1',
+        ]);
+
+        $amount = $request->input('funds');
+        $wallet = Wallet::where('user_id', $user->id)->first();
+
+        if ($wallet) {
+            $wallet->increment('balance', $amount);
+        } else {
+            // Optionally, create a wallet if it doesn't exist
+            $wallet = Wallet::create([
+                'user_id' => $user->id,
+                'balance' => $amount,
+            ]);
+        }
+
+        // Add to transaction history if applicable
+        WalletTransaction::create([
+            'user_id' => $user->id,
+            'amount' => $amount,
+            'type' => 'credit',
+            'note' => "Added funds to wallet by Admin",
+            'source' => 'manual',
+            'status' => 'approved',
+        ]);
+
+        // Notify the user or perform any other actions as needed
+
+
+        Toast::info("₹{$amount} has been added to {$user->name}'s wallet.");
     }
 }

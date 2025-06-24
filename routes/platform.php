@@ -18,10 +18,13 @@ use App\Orchid\Screens\Examples\ExampleTextEditorsScreen;
 use App\Orchid\Screens\Fund\FundScreen;
 use App\Orchid\Screens\Fund\PaymentDetailsScreen;
 use App\Orchid\Screens\Fund\TransactionEditScreen;
+use App\Orchid\Screens\Kyc\KycSubmissionListScreen;
 use App\Orchid\Screens\PendingRequestScreen;
 use App\Orchid\Screens\PlatformScreen;
 use App\Orchid\Screens\Role\RoleEditScreen;
 use App\Orchid\Screens\Role\RoleListScreen;
+use App\Orchid\Screens\Kyc\KycSubmissionScreen;
+use App\Orchid\Screens\Kyc\KycSubmissionViewScreen;
 use App\Orchid\Screens\User\UserEditScreen;
 use App\Orchid\Screens\User\UserListScreen;
 use App\Orchid\Screens\User\UserProfileScreen;
@@ -164,3 +167,21 @@ Route::screen('pending-request', PendingRequestScreen::class)
     ->breadcrumbs(fn($trail) => $trail
         ->parent('platform.index')
         ->push(__('Pending Requests'), route('platform.systems.pending.requests')));
+
+Route::screen('profile/kyc', KycSubmissionScreen::class)
+    ->name('platform.user.kyc')
+    ->breadcrumbs(fn($trail) => $trail
+        ->parent('platform.profile')
+        ->push(__('KYC'), route('platform.user.kyc')));
+
+Route::screen('kyc-requests',KycSubmissionListScreen::class)
+    ->name('platform.user.kyc.requests')
+    ->breadcrumbs(fn($trail) => $trail
+        ->parent('platform.index')
+        ->push(__('KYC Requests'), route('platform.user.kyc.requests')));
+
+Route::screen('kyc-requests/view/{id}', KycSubmissionViewScreen::class)
+    ->name('platform.user.kyc.requests.view')
+    ->breadcrumbs(fn($trail, $id) => $trail
+        ->parent('platform.user.kyc.requests')
+        ->push($id, route('platform.user.kyc.requests.view', $id)));

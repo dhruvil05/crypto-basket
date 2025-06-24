@@ -83,6 +83,7 @@ class PaymentDetailsScreen extends Screen
 
     public function confirmPayment(Request $request)
     {
+        
         $request->validate([
             'amount' => 'required|numeric|min:1',
             'payment_screenshot' => 'required|array',

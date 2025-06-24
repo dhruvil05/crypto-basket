@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Orchid\Layouts\User\UserReferralLayout;
 use Orchid\Screen\Action;
 use Orchid\Screen\Actions\Button;
+use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Screen;
 use Orchid\Support\Color;
 use Orchid\Support\Facades\Layout;
@@ -64,10 +65,17 @@ class UserProfileScreen extends Screen
                 ->icon('bs.people')
                 ->route('platform.switch.logout'),
 
+            Link::make('KYC')
+                ->novalidate()
+                ->icon('bs.file-earmark-text')
+                ->route('platform.user.kyc')
+                ->canSee(auth()->user()->kyc_status === 'pending' || auth()->user()->kyc_status === 'rejected'),
+
             Button::make('Sign out')
                 ->novalidate()
                 ->icon('bs.box-arrow-left')
                 ->route('platform.logout'),
+
         ];
     }
 

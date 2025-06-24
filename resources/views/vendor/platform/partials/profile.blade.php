@@ -11,6 +11,9 @@
         </small>
     </a>
 
-    <x-orchid-notification/>
+    {{-- <x-orchid-notification/> --}}
+    @if (!isKycApproved(Auth::user()->id))
+        <x-alert />
+    @endif
 
 </div>

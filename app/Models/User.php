@@ -96,4 +96,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(BasketPurchase::class);
     }
+
+    public function kycSubmission()
+    {
+        return $this->hasOne(KycSubmission::class);
+    }
 }

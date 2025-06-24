@@ -70,9 +70,20 @@ class UserListLayout extends Table
                             ->icon('bs.pencil'),
 
                         Link::make(__('Activity History'))
-                            ->route('platform.user.activity_history', ['activity'=>$user->id])
+                            ->route('platform.user.activity_history', ['activity' => $user->id])
                             ->icon('bs.clock-history')
                             ->canSee(Auth::user()->inRole('admin')),
+
+                        ModalToggle::make('Add Funds')
+                            ->modal('addFundsModal')
+                            ->modalTitle('Add Funds')
+                            ->icon('bs.plus-circle')
+                            ->asyncParameters([
+                                'user' => $user->id,
+                            ])
+                            ->method('addFunds')
+                            ->canSee(Auth::user()->inRole('admin')),
+
 
                         Button::make(__('Delete'))
                             ->icon('bs.trash3')
