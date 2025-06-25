@@ -18,6 +18,7 @@ class CryptoBasketEditScreen extends Screen
     public $cryptoBasket;
     protected array $cryptos = [];
     protected array $selected = [];
+    protected array $returnCycles = [];
     /**
      * Only admins can access this screen.
      */
@@ -72,10 +73,25 @@ class CryptoBasketEditScreen extends Screen
             }
         }
 
+        if ($cryptoBasket && $cryptoBasket->exists) {
+            $this->returnCycles = $cryptoBasket->returnCycles()
+                ->orderBy('months')
+                ->get()
+                ->map(function ($cycle) {
+                    return [
+                        'months' => $cycle->months,
+                        'return_percentage' => $cycle->return_percentage,
+                    ];
+                })
+                ->values()
+                ->toArray();
+        }
+
         return [
             'cryptoBasket' => $cryptoBasket,
             'cryptos' => $this->cryptos,
             'selected' => $this->selected,
+            'returnCycles' => $this->returnCycles
         ];
     }
 
@@ -119,35 +135,39 @@ class CryptoBasketEditScreen extends Screen
                     ->title('Basket Name')
                     ->required()
                     ->value($this->cryptoBasket->name ?? ''),
-                
+
                 Group::make([
                     Input::make('return_cycles[0][months]')
                         ->title('Months')
                         ->readonly()
                         ->value(3),
                     Input::make('return_cycles[0][return_percentage]')
-                        ->title('Return %'),
+                        ->title('Return %')
+                        ->value($this->returnCycles[0]['return_percentage'] ?? ''),
 
                     Input::make('return_cycles[1][months]')
                         ->title('Months')
                         ->readonly()
                         ->value(6),
                     Input::make('return_cycles[1][return_percentage]')
-                        ->title('Return %'),
+                        ->title('Return %')
+                        ->value($this->returnCycles[1]['return_percentage'] ?? ''),
 
                     Input::make('return_cycles[2][months]')
                         ->title('Months')
                         ->readonly()
                         ->value(9),
                     Input::make('return_cycles[2][return_percentage]')
-                        ->title('Return %'),
+                        ->title('Return %')
+                        ->value($this->returnCycles[2]['return_percentage'] ?? ''),
 
                     Input::make('return_cycles[3][months]')
                         ->title('Months')
                         ->readonly()
                         ->value(12),
                     Input::make('return_cycles[3][return_percentage]')
-                        ->title('Return %'),
+                        ->title('Return %')
+                        ->value($this->returnCycles[3]['return_percentage'] ?? ''),
                 ]),
             ]),
 
@@ -208,10 +228,13 @@ class CryptoBasketEditScreen extends Screen
             ]);
         }
 
-        // Save return cycles
+        // Save return cycle
+        $cryptoBasket->returnCycles()->delete();
+
         foreach ($return_cycles as $cycle) {
             if (isset($cycle['months']) && isset($cycle['return_percentage'])) {
                 $cryptoBasket->returnCycles()->create([
+                    'crypto_basket_id' => $cryptoBasket->id,
                     'months' => $cycle['months'],
                     'return_percentage' => $cycle['return_percentage'],
                 ]);

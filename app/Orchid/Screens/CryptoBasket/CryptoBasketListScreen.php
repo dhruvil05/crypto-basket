@@ -12,6 +12,7 @@ use App\Models\WalletTransaction;
 use App\Orchid\Layouts\CryptoBasket\BuyBasketLayout;
 use App\Orchid\Layouts\CryptoBasket\CryptoBasketListLayout;
 use Illuminate\Http\Request;
+use Orchid\Screen\Layouts\Modal;
 use Orchid\Support\Facades\Layout;
 
 class CryptoBasketListScreen extends Screen
@@ -69,7 +70,8 @@ class CryptoBasketListScreen extends Screen
                 ->async('asyncBuyBasketModal')
                 ->title(__('Buy Basket'))
                 ->applyButton(__('Buy'))
-                ->closeButton(__('Close')),
+                ->closeButton(__('Close'))
+                ->size(Modal::SIZE_LG),
         ];
     }
 

@@ -2,6 +2,8 @@
 
 namespace App\Orchid\Screens\Kyc;
 
+use App\Models\KycSubmission;
+use App\Models\User;
 use App\Orchid\Layouts\Kyc\KycStatusLayout;
 use App\Orchid\Layouts\Kyc\KycSubmissionImgLayout;
 use App\Orchid\Layouts\Kyc\KycSubmissionViewLayout;
@@ -22,9 +24,10 @@ class KycSubmissionViewScreen extends Screen
      */
     public function query(Request $request, $id): iterable
     {
-
+        $kycData = KycSubmission::where('user_id', $id)
+            ->firstOrFail();
         return [
-            'kyc_data' => $request->user()->kycSubmission()->findOrFail($id)->toArray(),
+            'kyc_data' => $kycData->toArray(),
         ];
     }
 
@@ -54,7 +57,7 @@ class KycSubmissionViewScreen extends Screen
      * @return \Orchid\Screen\Layout[]|string[]
      */
     public function layout(): iterable
-    {   
+    {
         return [
             Layout::block(KycSubmissionImgLayout::class)
                 ->title(__('KYC Documents'))
@@ -73,7 +76,7 @@ class KycSubmissionViewScreen extends Screen
                         ->icon('bs.check-circle')
                         ->method('updateKycStatus')
                 ),
-        
+
         ];
     }
 
@@ -83,13 +86,14 @@ class KycSubmissionViewScreen extends Screen
             'kyc_data.status' => 'required|in:pending,approved,rejected',
         ]);
 
-        $kycSubmission = $request->user()->kycSubmission()->findOrFail($id);
+        $kycSubmission = KycSubmission::where('user_id', $id)
+            ->firstOrFail();
         $kycSubmission->update([
             'status' => $request->input('kyc_data.status'),
         ]);
 
         // change user's kyc_status
-        $user = $request->user();
+        $user = User::find($id);
         $user->kyc_status = $request->input('kyc_data.status');
         $user->save();
 

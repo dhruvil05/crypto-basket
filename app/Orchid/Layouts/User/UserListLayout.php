@@ -77,12 +77,12 @@ class UserListLayout extends Table
                         ModalToggle::make('Add Funds')
                             ->modal('addFundsModal')
                             ->modalTitle('Add Funds')
-                            ->icon('bs.plus-circle')
+                            ->icon('bs.wallet2')
                             ->asyncParameters([
                                 'user' => $user->id,
                             ])
                             ->method('addFunds')
-                            ->canSee(Auth::user()->inRole('admin')),
+                            ->canSee(Auth::user()->inRole('admin') && Auth::user()->hasAccess('platform.funds.direct.add')),
 
 
                         Button::make(__('Delete'))

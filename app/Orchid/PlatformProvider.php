@@ -141,7 +141,8 @@ class PlatformProvider extends OrchidServiceProvider
             ItemPermission::group(__('Funds'))
                 ->addPermission('platform.funds.wallet', __('Wallet'))
                 ->addPermission('platform.funds.edit', __('Wallet Transactions'))
-                ->addPermission('platform.owned-baskets', __('Owned Baskets')),
+                ->addPermission('platform.owned-baskets', __('Owned Baskets'))
+                ->addPermission('platform.funds.direct.add', __('Direct Add Funds')),
         ];
     }
 }
