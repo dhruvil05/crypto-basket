@@ -7,12 +7,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Orchid\Attachment\Models\Attachment;
 use Orchid\Screen\Actions\ModalToggle;
+use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Fields\Picture;
 use Orchid\Screen\Fields\Upload;
+use Orchid\Screen\Sight;
 use Orchid\Support\Facades\Layout;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Toast;
+use Orchid\Support\Color;
 
 class PaymentDetailsScreen extends Screen
 {
@@ -25,6 +28,12 @@ class PaymentDetailsScreen extends Screen
     {
         return [
             'showSuccessModal' => session()->get('showSuccessModal', false),
+            'payment_details' => (object) [
+                'bank_name' => 'XYZ Bank',
+                'account_number' => '1234567890',
+                'ifsc_code' => 'XYZ0000001',
+                'upi_id' => 'admin@upi',
+            ],
         ];
     }
 
@@ -61,7 +70,24 @@ class PaymentDetailsScreen extends Screen
     public function layout(): iterable
     {
         return [
-            Layout::view('orchid.funds.payment_details'),
+            // Layout::view('orchid.funds.payment_details'),
+            Layout::legend('payment_details', [
+                Sight::make('description', '')
+                    ->render(fn () => '<p class="text-muted">Please transfer the amount to the following details:</p>'),
+                
+                Sight::make('bank_name', 'Bank Name')
+                    ->render(fn ($payment) => $payment->bank_name),
+                
+                Sight::make('account_number', 'Account Number')
+                    ->render(fn ($payment) => $payment->account_number),
+                
+                Sight::make('ifsc_code', 'IFSC Code')
+                    ->render(fn ($payment) => $payment->ifsc_code),
+                
+                Sight::make('upi_id', 'UPI ID')
+                    ->render(fn ($payment) => $payment->upi_id),
+            ])->title('Payment Details'),
+
             Layout::modal('confirmPaymentModal', Layout::rows([
                 Input::make('amount')
                     ->title('Amount')
