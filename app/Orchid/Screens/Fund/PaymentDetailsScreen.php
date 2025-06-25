@@ -23,7 +23,9 @@ class PaymentDetailsScreen extends Screen
      */
     public function query(): iterable
     {
-        return [];
+        return [
+            'showSuccessModal' => session()->get('showSuccessModal', false),
+        ];
     }
 
     /**
@@ -78,6 +80,16 @@ class PaymentDetailsScreen extends Screen
 
             ]))->title('Confirm Payment')
                 ->applyButton('Submit'),
+
+            
+            Layout::modal('successNoticeModal', [
+                Layout::view('orchid.funds.success_modal'),
+            ])
+                ->title('Payment Submitted')
+                ->applyButton('OK')
+                ->method('redirectToWallet')
+                ->closeButton('')
+                ->open(session()->get('showSuccessModal', false)),
         ];
     }
 
@@ -107,12 +119,20 @@ class PaymentDetailsScreen extends Screen
                 'screenshot' => $fullPath, // Store the full path
             ]);
 
-            Toast::info('Payment details submitted successfully. Please wait for admin approval.');
+            session()->flash('showSuccessModal', true);
+            return redirect()->route('platform.funds.payment_details');
 
-            return redirect()->route('platform.wallet'); // Redirect to the funds screen
+            // Toast::info('Payment details submitted successfully. Please wait for admin approval.');
+            // return redirect()->route('platform.wallet'); // Redirect to the funds screen
         } else {
             Toast::error('Attachment not found.');
             return back()->withInput();
         }
+    }
+
+
+    public function redirectToWallet()
+    {
+        return redirect()->route('platform.wallet');
     }
 }
