@@ -29,7 +29,7 @@ class ActivityHistoryLayout extends Table
                 ->filter(Input::make()),
 
             TD::make('amount', __('Amount'))
-                ->render(fn(WalletTransaction $tx) => number_format((float)$tx->amount, 2))
+                ->render(fn(WalletTransaction $tx) => '₹' . number_format((float)$tx->amount, 2) . ' ($' . number_format(inr_to_usd((float)$tx->amount), 2) . ')')
                 ->align(TD::ALIGN_RIGHT)
                 ->sort(),
 

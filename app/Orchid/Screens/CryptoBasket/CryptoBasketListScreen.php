@@ -102,8 +102,15 @@ class CryptoBasketListScreen extends Screen
         $request->validate([
             'basket_id' => 'required|exists:crypto_baskets,id',
             'amount' => 'required|numeric|min:1',
-            'return_cycles' => 'array',
-            'return_cycles.*' => 'exists:basket_return_cycles,id',
+            'return_cycles' => 'required|array',
+        ],
+        [
+            'basket_id.required' => 'The basket ID is required.',
+            'basket_id.exists' => 'The selected basket does not exist.',
+            'amount.required' => 'The investment amount is required.',
+            'amount.numeric' => 'The investment amount must be a number.',
+            'amount.min' => 'The investment amount must be at least 1.',
+            'return_cycles.required' => 'Please select at least one return cycle.',
         ]);
 
         $wallet = Wallet::where('user_id', $user->id)->first();
