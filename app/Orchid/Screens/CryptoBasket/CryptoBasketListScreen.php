@@ -95,8 +95,8 @@ class CryptoBasketListScreen extends Screen
         $user = auth()?->user();
 
         if (!isKycApproved($user->id)) {
-            Toast::error('KYC must be approved to purchase a basket.');
-            return redirect()->route('platform.profile');
+            Toast::error('Please complete KYC to proceed with the purchase.');
+            return redirect()->route('platform.user.kyc');
         }
         // Validate the basket ID and amount
         $request->validate([

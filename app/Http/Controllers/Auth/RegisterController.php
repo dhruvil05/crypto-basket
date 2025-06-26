@@ -42,6 +42,7 @@ class RegisterController extends Controller
         Auth::login($user);
 
         // Redirect to dashboard or home
-        return redirect()->route('platform.index');
+        // return redirect()->route('platform.index');
+        return redirect()->route('platform.user.kyc');
     }
 }

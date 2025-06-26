@@ -24,8 +24,7 @@ class KycSubmissionViewScreen extends Screen
      */
     public function query(Request $request, $id): iterable
     {
-        $kycData = KycSubmission::where('user_id', $id)
-            ->firstOrFail();
+        $kycData = KycSubmission::findOrFail($id);
         return [
             'kyc_data' => $kycData->toArray(),
         ];

@@ -142,7 +142,8 @@ Route::screen('/wallet', FundScreen::class)
         ->push(__('Wallet'), route('platform.wallet')));
 
 Route::screen('/funds/payment_details', PaymentDetailsScreen::class)
-    ->name('platform.funds.payment_details');
+    ->name('platform.funds.payment_details')
+    ->middleware('kyc.approved');
 
 Route::screen('/funds/{transaction}/edit', TransactionEditScreen::class)
     ->name('platform.funds.edit');
