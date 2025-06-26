@@ -58,13 +58,13 @@ class KycSubmissionViewScreen extends Screen
     public function layout(): iterable
     {
         return [
-            Layout::block(KycSubmissionImgLayout::class)
-                ->title(__('KYC Documents'))
-                ->description(__("Uploaded KYC documents")),
-
             Layout::block(KycSubmissionViewLayout::class)
                 ->title(__('Bank Information'))
                 ->description(__("Update your bank information.")),
+                
+            Layout::block(KycSubmissionImgLayout::class)
+                ->title(__('KYC Documents'))
+                ->description(__("Uploaded KYC documents")),
 
             Layout::block(KycStatusLayout::class)
                 ->title(__('Status Update'))

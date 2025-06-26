@@ -19,6 +19,10 @@ class KycSubmissionImgLayout extends Rows
     public function fields(): array
     {
         return [
+            Picture::make('kyc_data.bank_book_img')
+                ->title('Bank Book Image')
+                ->readonly(),
+
             Picture::make('kyc_data.pan_card_img')
                 ->title('PAN Card Image')
                 ->readonly(),
