@@ -1,3 +1,32 @@
+<style>
+/* Match Select2 to Bootstrap .form-control styling */
+.select2-container--default .select2-selection--single {
+    height: 38px !important;
+    padding: 6px 12px;
+    border: 1px solid #ced4da !important;
+    border-radius: 0.375rem !important;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    line-height: 1.5;
+    box-shadow: none;
+}
+
+/* Match arrow area */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 38px !important;
+    top: 0 !important;
+}
+
+/* Match rendered text alignment */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 24px !important;
+    padding-left: 0 !important;
+}
+</style>
+
+
 @php
     $cryptos = $cryptos ?? [];
     $selected = $selected ?? [];
@@ -9,7 +38,7 @@
     $oldPercentages = old('basket.percentages', $selected['percentages'] ?? []);
 @endphp
 
-<div id="crypto-basket-rows">
+{{-- <div id="crypto-basket-rows">
     @php
         $count = count($oldCryptocurrencies ?? []);
         $count = $count > 0 ? $count : 1; // At least one row
@@ -45,7 +74,69 @@
     @endfor
 </div>
 
-<button type="button" class="btn btn-primary mt-2" onclick="addCryptoRow()">+ Add Currency</button>
+<button type="button" class="btn btn-primary mt-2" onclick="addCryptoRow()">+ Add Currency</button> --}}
+
+<div class="block bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-4 rounded shadow-sm mb-4">
+    <div class="form-group">
+        <!-- Common Heading -->
+        <label class="form-label text-gray-800 dark:text-white font-semibold mb-2">
+            Cryptocurrency Basket <span class="text-danger">*</span>
+        </label>
+
+        <!-- Column Labels -->
+        <div class="row mb-2">
+            <div class="col-md-6 d-flex align-items-center">
+                <label class="mb-0 text-muted fw-semibold">Cryptocurrency <span class="text-danger">*</span></label>
+            </div>
+            <div class="col-md-4 d-flex align-items-center">
+                <label class="mb-0 text-muted fw-semibold">Percentage <span class="text-danger">*</span></label>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+
+        <!-- Dynamic Rows -->
+        <div id="crypto-basket-rows">
+            @php
+                $count = count($oldCryptocurrencies ?? []);
+                $count = $count > 0 ? $count : 1;
+            @endphp
+
+            @for($i = 0; $i < $count; $i++)
+                <div class="row mb-2 crypto-basket-row align-items-center">
+                    <div class="col-md-6">
+                        <select name="basket[cryptocurrencies][]" class="form-control crypto-select select2" required>
+                            <option value="">Select</option>
+                            @foreach($cryptos as $symbol => $crypto)
+                                <option value="{{ $symbol }}"
+                                        data-coin_id="{{ $crypto['coin_id'] }}"
+                                        data-name="{{ $crypto['name'] }}"
+                                        @if(($oldCryptocurrencies[$i] ?? '') == $symbol) selected @endif>
+                                    {{ $crypto['label'] }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <input type="hidden" name="basket[coin_ids][]" class="coin-id-field" value="{{ $oldCoinIds[$i] ?? '' }}">
+                        <input type="hidden" name="basket[names][]" class="coin-name-field" value="{{ $oldNames[$i] ?? '' }}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <input type="number" name="basket[percentages][]" class="form-control"
+                               placeholder="%" min="0" max="100" step="0.01" required
+                               value="{{ $oldPercentages[$i] ?? '' }}">
+                    </div>
+
+                    <div class="col-md-2 d-flex align-items-center">
+                        <button type="button" class="btn btn-danger remove-row" onclick="removeCryptoRow(this)"><x-orchid-icon path="bs.trash" class="small"/></button>
+                    </div>
+                </div>
+            @endfor
+        </div>
+
+        <!-- Add Button -->
+        <button type="button" class="btn btn-primary mt-2" onclick="addCryptoRow()"><x-orchid-icon path="bs.plus-circle" class="w-6 h-6 me-1"/> Add Currency</button>
+    </div>
+</div>
+
 
 <!-- Include Select2 assets -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />

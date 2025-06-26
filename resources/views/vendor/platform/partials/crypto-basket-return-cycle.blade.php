@@ -6,14 +6,32 @@
             : []);
 @endphp
 
-<div class="mb-3" id="return-cycles-wrapper">
+{{-- <div class="mb-3" id="return-cycles-wrapper">
     <div id="return-cycles-container"></div>
 
     <button type="button" class="btn btn-primary mt-2" onclick="addReturnCycle()">+ Add Return Cycle</button>
 
     <!-- Hidden input for submitting JSON -->
     <input type="hidden" name="return_cycles_json" id="return_cycles_json">
+</div> --}}
+
+<div class="block bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-4 rounded shadow-sm mb-4">
+    <div class="form-group">
+        <label class="form-label text-gray-800 dark:text-white font-semibold mb-2">
+            Return Cycles <span class="text-danger">*</span>
+        </label>
+
+        <div id="return-cycles-wrapper">
+            <div id="return-cycles-container"></div>
+
+            <button type="button" class="btn btn-primary mt-3" onclick="addReturnCycle()"><x-orchid-icon path="bs.plus-circle" class="w-6 h-6 me-1"/> Add Return Cycle</button>
+
+            <!-- Hidden input for submitting JSON -->
+            <input type="hidden" name="return_cycles_json" id="return_cycles_json">
+        </div>
+    </div>
 </div>
+
 
 <script>
 (function () {
@@ -24,20 +42,37 @@
         const container = document.createElement('div');
         container.className = 'row mb-2 align-items-end return-cycle-row';
 
+        // container.innerHTML = `
+        //     <div class="col-md-5">
+        //         <label>Months</label>
+        //         <input type="number" class="form-control months-input" value="${cycle.months}" required>
+        //     </div>
+        //     <div class="col-md-5">
+        //         <label>Return %</label>
+        //         <input type="number" class="form-control percentage-input" value="${cycle.return_percentage}" 
+        //                required min="0" step="0.01">
+        //     </div>
+        //     <div class="col-md-2">
+        //         <button type="button" class="btn btn-danger" onclick="removeReturnCycle(this)">-</button>
+        //     </div>
+        // `;
+
         container.innerHTML = `
-            <div class="col-md-5">
-                <label>Months</label>
+            <div class="col-md-4 d-flex align-items-center gap-2">
+                <label class="mb-0" style="min-width: 60px;">Months<span class="text-danger">*</span></label>
                 <input type="number" class="form-control months-input" value="${cycle.months}" required>
             </div>
-            <div class="col-md-5">
-                <label>Return %</label>
-                <input type="number" class="form-control percentage-input" value="${cycle.return_percentage}" 
-                       required min="0" step="0.01">
+            <div class="col-md-4 d-flex align-items-center gap-2">
+                <label class="mb-0" style="min-width: 75px;">Return (%)<span class="text-danger">*</span></label>
+                <input type="number" class="form-control percentage-input" value="${cycle.return_percentage}" required min="0" step="0.01">
             </div>
-            <div class="col-md-2">
-                <button type="button" class="btn btn-danger" onclick="removeReturnCycle(this)">-</button>
+            <div class="col-md-2 d-flex align-items-center">
+                <button type="button" class="btn btn-danger" onclick="removeReturnCycle(this)">
+                    <x-orchid-icon path="bs.trash" class="small"/>
+                    </button>
             </div>
         `;
+
 
         document.getElementById('return-cycles-container').appendChild(container);
         updateReturnCyclesJson();
