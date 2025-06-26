@@ -84,20 +84,19 @@ class KycSubmissionViewScreen extends Screen
         $request->validate([
             'kyc_data.status' => 'required|in:pending,approved,rejected',
         ]);
-
-        $kycSubmission = KycSubmission::where('user_id', $id)
-            ->firstOrFail();
+        $status = $request->input('kyc_data.status');
+        $kycSubmission = KycSubmission::findOrFail($id);
         $kycSubmission->update([
-            'status' => $request->input('kyc_data.status'),
+            'status' => $status,
         ]);
-
+        
         // change user's kyc_status
-        $user = User::find($id);
-        $user->kyc_status = $request->input('kyc_data.status');
+        $user = User::findOrFail($kycSubmission->user_id);
+        $user->kyc_status = $status;
         $user->save();
 
         // Flash a success message
-        Toast::info('KYC status updated successfully.');
+        Toast::info("{$user->name} Kyc {$status}.");
         return redirect()->route('platform.user.kyc.requests.view', ['id' => $id]);
     }
 }

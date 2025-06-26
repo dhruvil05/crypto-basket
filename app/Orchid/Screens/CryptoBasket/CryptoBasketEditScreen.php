@@ -136,42 +136,44 @@ class CryptoBasketEditScreen extends Screen
                     ->required()
                     ->value($this->cryptoBasket->name ?? ''),
 
-                Group::make([
-                    Input::make('return_cycles[0][months]')
-                        ->title('Months')
-                        ->readonly()
-                        ->value(3),
-                    Input::make('return_cycles[0][return_percentage]')
-                        ->title('Return %')
-                        ->value($this->returnCycles[0]['return_percentage'] ?? ''),
+                // Group::make([
+                //     Input::make('return_cycles[0][months]')
+                //         ->title('Months')
+                //         ->readonly()
+                //         ->value(3),
+                //     Input::make('return_cycles[0][return_percentage]')
+                //         ->title('Return %')
+                //         ->value($this->returnCycles[0]['return_percentage'] ?? ''),
 
-                    Input::make('return_cycles[1][months]')
-                        ->title('Months')
-                        ->readonly()
-                        ->value(6),
-                    Input::make('return_cycles[1][return_percentage]')
-                        ->title('Return %')
-                        ->value($this->returnCycles[1]['return_percentage'] ?? ''),
+                //     Input::make('return_cycles[1][months]')
+                //         ->title('Months')
+                //         ->readonly()
+                //         ->value(6),
+                //     Input::make('return_cycles[1][return_percentage]')
+                //         ->title('Return %')
+                //         ->value($this->returnCycles[1]['return_percentage'] ?? ''),
 
-                    Input::make('return_cycles[2][months]')
-                        ->title('Months')
-                        ->readonly()
-                        ->value(9),
-                    Input::make('return_cycles[2][return_percentage]')
-                        ->title('Return %')
-                        ->value($this->returnCycles[2]['return_percentage'] ?? ''),
+                //     Input::make('return_cycles[2][months]')
+                //         ->title('Months')
+                //         ->readonly()
+                //         ->value(9),
+                //     Input::make('return_cycles[2][return_percentage]')
+                //         ->title('Return %')
+                //         ->value($this->returnCycles[2]['return_percentage'] ?? ''),
 
-                    Input::make('return_cycles[3][months]')
-                        ->title('Months')
-                        ->readonly()
-                        ->value(12),
-                    Input::make('return_cycles[3][return_percentage]')
-                        ->title('Return %')
-                        ->value($this->returnCycles[3]['return_percentage'] ?? ''),
-                ]),
+                //     Input::make('return_cycles[3][months]')
+                //         ->title('Months')
+                //         ->readonly()
+                //         ->value(12),
+                //     Input::make('return_cycles[3][return_percentage]')
+                //         ->title('Return %')
+                //         ->value($this->returnCycles[3]['return_percentage'] ?? ''),
+                // ]),
             ]),
 
-
+            Layout::view('vendor.platform.partials.crypto-basket-return-cycle', [
+                'returnCycles' => $this->returnCycles ?? []
+            ]),
             Layout::view('vendor.platform.partials.crypto-basket-dynamic', [
                 'cryptos' => $this->cryptos ?? [],
                 'selected' => $this->selected ?? [],
@@ -185,7 +187,8 @@ class CryptoBasketEditScreen extends Screen
     public function save(CryptoBasket $cryptoBasket, Request $request)
     {
         $data = $request->input(['basket']);
-        $return_cycles = $request->input('return_cycles', []);
+        $return_cycles = json_decode($request->input('return_cycles_json', []), true);
+        
         // Validate input
         $validated = $request->validate([
             'basket.name' => 'required|string|max:255',
