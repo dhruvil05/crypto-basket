@@ -48,4 +48,9 @@ class BasketPurchase extends Model
     {
         return $this->sale()->exists();
     }
+
+    public function withdrawals()
+    {
+        return $this->hasOne(BasketWithdrawal::class);
+    }
 }

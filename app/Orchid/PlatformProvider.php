@@ -97,6 +97,11 @@ class PlatformProvider extends OrchidServiceProvider
                 ->route('platform.systems.pending.requests')
                 ->permission('platform.systems.pending.requests'),
 
+            Menu::make(__('Withdraw Requests'))
+                ->icon('bs.cash')
+                ->route('platform.fund.withdraw_requests')
+                ->permission('platform.fund.withdraw_requests'),
+
             Menu::make(__('KYC Requests'))
                 ->icon('bs.shield-lock')
                 ->route('platform.user.kyc.requests')
@@ -142,7 +147,8 @@ class PlatformProvider extends OrchidServiceProvider
                 ->addPermission('platform.funds.wallet', __('Wallet'))
                 ->addPermission('platform.funds.edit', __('Wallet Transactions'))
                 ->addPermission('platform.owned-baskets', __('Owned Baskets'))
-                ->addPermission('platform.funds.direct.add', __('Direct Add Funds')),
+                ->addPermission('platform.funds.direct.add', __('Direct Add Funds'))
+                ->addPermission('platform.fund.withdraw_requests', __('Withdraw Requests')),
         ];
     }
 }

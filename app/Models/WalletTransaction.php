@@ -75,5 +75,9 @@ class WalletTransaction extends Model
     {
         return $this->belongsTo(Wallet::class);
     }
-    
+
+    public function basketWithdrawal()
+    {
+        return $this->belongsTo(BasketWithdrawal::class, 'reference_id')->where('source', 'basket');
+    }
 }

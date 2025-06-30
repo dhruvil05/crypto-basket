@@ -6,15 +6,19 @@ namespace App\Orchid\Screens\Fund;
 
 use App\Models\Wallet;
 use App\Models\WalletTransaction;
+use App\Models\WalletWithdrawal;
 use App\Orchid\Layouts\Fund\FundLayout;
+use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Link;
+use Orchid\Screen\Actions\ModalToggle;
+use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Layout;
-
+use Orchid\Support\Facades\Toast;
 
 class FundScreen extends Screen
 {
-    protected $balance;
+    public $balance;
     /**
      * Fetch data to be displayed on the screen.
      *
@@ -24,10 +28,12 @@ class FundScreen extends Screen
     {
         $this->balance = Wallet::where('user_id', auth()->user()?->id)
             ->value('balance');
+
         if ($this->balance === null) {
 
             $this->balance = 0;
         }
+
         $walletTransactions = WalletTransaction::where('user_id', auth()->user()?->id)
             ->whereNotNull('status')
             ->latest()
@@ -62,10 +68,16 @@ class FundScreen extends Screen
                 ->route('platform.funds.payment_details')
                 ->canSee(auth()->user()?->hasAccess('platform.funds.wallet')),
 
+            ModalToggle::make('Withdraw Funds')
+                ->modal('withdrawalModal')
+                ->method('withdrawalRequest')
+                ->icon('bs.check-circle'),
+
             Link::make(__('Activity History'))
                 ->icon('bs.clock-history')
                 ->route('platform.funds.activity_history')
                 ->canSee(auth()->user()?->hasAccess('platform.funds.wallet')),
+
 
         ];
     }
@@ -90,6 +102,55 @@ class FundScreen extends Screen
             //     ])->ratio(('30/70')),
             //     'Recent Transactions' =>  FundLayout::class,
             // ]),
+            Layout::modal('withdrawalModal', Layout::rows([
+                Input::make('amount')
+                    ->title('Amount')
+                    ->type('number')
+                    ->placeholder('Enter the amount you want to withdraw')
+                    ->required(),
+
+            ]))->title('Withdrawal')
+                ->applyButton('Submit'),
         ];
+    }
+
+    public function withdrawalRequest(Request $request)
+    {
+
+        $user = auth()->user();
+        $withdrawalAmount = $request->input('amount');
+
+        $request->validate([
+            'amount' => 'required|numeric|min:1',
+        ]);
+
+        if ($withdrawalAmount > $this->balance) {
+            return redirect()->back()->withErrors(['amount' => 'Insufficient balance']);
+        }
+
+        // Create a new wallet transaction for withdrawal
+        $WalletTransaction = WalletTransaction::create([
+            'user_id' => $user->id,
+            'amount' => $withdrawalAmount,
+            'type' => 'withdrawal',
+            'note' => 'Withdrawal request',
+            'status' => 'pending',
+            'source' => 'wallet withdrawal'
+        ]);
+        // Add wallet withdrawal request logic here
+        WalletWithdrawal::create([
+            'user_id' => $user->id,
+            'amount' => $withdrawalAmount,
+            'status' => 'pending',
+            'note' => 'Withdrawal request',
+            'wallet_transaction_id' => $WalletTransaction->id,
+        ]);
+
+        
+
+        Toast::success('Withdrawal request submitted successfully. Your request is under review.');
+
+        return redirect()->route('platform.wallet');
+
     }
 }

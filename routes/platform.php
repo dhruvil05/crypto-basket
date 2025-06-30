@@ -18,6 +18,8 @@ use App\Orchid\Screens\Examples\ExampleTextEditorsScreen;
 use App\Orchid\Screens\Fund\FundScreen;
 use App\Orchid\Screens\Fund\PaymentDetailsScreen;
 use App\Orchid\Screens\Fund\TransactionEditScreen;
+use App\Orchid\Screens\Fund\UserBankDetailScreen;
+use App\Orchid\Screens\Fund\WithdrawRequestsScreen;
 use App\Orchid\Screens\Kyc\KycSubmissionListScreen;
 use App\Orchid\Screens\PendingRequestScreen;
 use App\Orchid\Screens\PlatformScreen;
@@ -156,6 +158,18 @@ Route::screen('/funds/activity_history', ActivityHistoryScreen::class)
 
 Route::screen('user/{activity}/activity_history', ActivityHistoryScreen::class)
     ->name('platform.user.activity_history');
+
+Route::screen('/withdrawal-requests', WithdrawRequestsScreen::class)
+    ->name('platform.fund.withdraw_requests')
+    ->breadcrumbs(fn($trail) => $trail
+        ->parent('platform.index')
+        ->push(__('Withdrawal Requests'), route('platform.fund.withdraw_requests')));
+
+Route::screen('/withdrawal-requests/{WalletWithdrawal}', UserBankDetailScreen::class)
+    ->name('platform.fund.withdraw_requests.transfer')
+    ->breadcrumbs(fn($trail, $WalletWithdrawal) => $trail
+        ->parent('platform.fund.withdraw_requests')
+        ->push(__('Transfer'), route('platform.fund.withdraw_requests.transfer', $WalletWithdrawal)));
 
 Route::screen('/owned-baskets', OwnedBasketScreen::class)
     ->name('platform.owned-baskets')

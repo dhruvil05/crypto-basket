@@ -101,4 +101,14 @@ class User extends Authenticatable
     {
         return $this->hasOne(KycSubmission::class);
     }
+
+    public function basketWithdrawals()
+    {
+        return $this->hasMany(BasketWithdrawal::class);
+    }
+
+    public function walletWithdrawals()
+    {
+        return $this->hasMany(WalletWithdrawal::class);
+    }
 }

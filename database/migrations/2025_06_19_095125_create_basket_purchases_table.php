@@ -19,7 +19,8 @@ return new class extends Migration
             $table->decimal('amount', 18, 8); // Amount invested at time of purchase
             $table->json('snapshot')->nullable(); // Optional: basket structure at purchase time
             $table->enum('status', ['pending', 'completed', 'cancelled'])->default('completed');
-
+            $table->boolean('is_withdrawn')->default(false);
+            $table->timestamp('withdrawn_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

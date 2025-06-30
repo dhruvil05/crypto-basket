@@ -2,35 +2,40 @@
 
 namespace App\Orchid\Screens\Fund;
 
+use App\Models\Wallet;
 use App\Models\WalletTransaction;
+use App\Models\WalletWithdrawal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Orchid\Attachment\Models\Attachment;
 use Orchid\Screen\Actions\ModalToggle;
 use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Fields\Upload;
+use Orchid\Screen\Screen;
 use Orchid\Screen\Sight;
 use Orchid\Support\Facades\Layout;
-use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Toast;
 
-class PaymentDetailsScreen extends Screen
+class UserBankDetailScreen extends Screen
 {
+    public $walletWithdrawal;
+    public $payment_details;
     /**
      * Fetch data to be displayed on the screen.
      *
      * @return array
      */
-    public function query(): iterable
+    public function query(Request $request): iterable
     {
+        // dd($request->route('WalletWithdrawal'));
+        $this->walletWithdrawal = WalletWithdrawal::with('user.kycSubmission')
+            ->findOrFail($request->route('WalletWithdrawal'));
+
+        $this->payment_details = $this->walletWithdrawal->user->kycSubmission;
+
         return [
-            'showSuccessModal' => session()->get('showSuccessModal', false),
-            'payment_details' => (object) [
-                'bank_name' => 'XYZ Bank',
-                'account_number' => '1234567890',
-                'ifsc_code' => 'XYZ0000001',
-                'upi_id' => 'admin@upi',
-            ],
+            'walletWithdrawal' => $this->walletWithdrawal,
+            'payment_details' => $this->payment_details,
         ];
     }
 
@@ -41,7 +46,7 @@ class PaymentDetailsScreen extends Screen
      */
     public function name(): ?string
     {
-        return 'Payment Details';
+        return 'User Bank Details';
     }
 
     /**
@@ -67,22 +72,22 @@ class PaymentDetailsScreen extends Screen
     public function layout(): iterable
     {
         return [
-            // Layout::view('orchid.funds.payment_details'),
             Layout::legend('payment_details', [
                 Sight::make('description', '')
-                    ->render(fn () => '<p class="text-muted">Please transfer the amount to the following details:</p>'),
-                
+                    ->render(fn() => '<p class="text-muted">Please transfer the amount to the following details:</p>'),
+
                 Sight::make('bank_name', 'Bank Name')
-                    ->render(fn ($payment) => $payment->bank_name),
-                
-                Sight::make('account_number', 'Account Number')
-                    ->render(fn ($payment) => $payment->account_number),
-                
-                Sight::make('ifsc_code', 'IFSC Code')
-                    ->render(fn ($payment) => $payment->ifsc_code),
-                
-                Sight::make('upi_id', 'UPI ID')
-                    ->render(fn ($payment) => $payment->upi_id),
+                    ->render(fn($payment) => $payment->bank_name),
+
+                Sight::make('bank_account_holder', 'Holder Name')
+                    ->render(fn($payment) => $payment->bank_account_holder ?? 'Not Available'),
+
+                Sight::make('bank_account_number', 'Account Number')
+                    ->render(fn($payment) => $payment->bank_account_number),
+
+                Sight::make('bank_ifsc', 'IFSC Code')
+                    ->render(fn($payment) => $payment->bank_ifsc ?? 'Not Available'),
+
             ])->title('Payment Details'),
 
             Layout::modal('confirmPaymentModal', Layout::rows([
@@ -90,7 +95,10 @@ class PaymentDetailsScreen extends Screen
                     ->title('Amount')
                     ->type('number')
                     ->placeholder('Enter the amount you transferred')
-                    ->required(),
+                    ->required()
+                    ->value(function () {
+                        return $this->walletWithdrawal->amount;
+                    }),
 
                 Input::make('utr_number')
                     ->title('UTR / Transaction ID')
@@ -103,22 +111,11 @@ class PaymentDetailsScreen extends Screen
 
             ]))->title('Confirm Payment')
                 ->applyButton('Submit'),
-
-            
-            Layout::modal('successNoticeModal', [
-                Layout::view('orchid.funds.success_modal'),
-            ])
-                ->title('Payment Submitted')
-                ->applyButton('OK')
-                ->method('redirectToWallet')
-                ->closeButton('')
-                ->open(session()->get('showSuccessModal', false)),
         ];
     }
 
     public function confirmPayment(Request $request)
     {
-        
         $request->validate([
             'amount' => 'required|numeric|min:1',
             'payment_screenshot' => 'required|array',
@@ -126,24 +123,46 @@ class PaymentDetailsScreen extends Screen
             'utr_number' => 'required|string',
         ]);
 
+        $walletWithdrawal = $this->walletWithdrawal;
+        $amount = $request->input('amount');
+        $utr_number = $request->input('utr_number');
         $attachmentId = $request->input('payment_screenshot')[0];
         $attachment = Attachment::find($attachmentId);
 
         if ($attachment) {
             $fullPath = Storage::url($attachment->path . $attachment->name . '.' . $attachment->extension);
 
-            WalletTransaction::create([
-                'user_id' => auth()->user()->id,
-                'amount' => $request->get('amount'),
-                'type' => 'deposit',
-                'status' => 'pending',
-                'source' => 'manual',
-                'utr' => $request->input('utr_number'),
-                'screenshot' => $fullPath, // Store the full path
+            $walletWithdrawal->update([
+                'utr_number' => $utr_number,
+                'screenshot' => $fullPath,
+                'status' => 'completed',
             ]);
 
-            session()->flash('showSuccessModal', true);
-            return redirect()->route('platform.fund.withdraw_requests');
+            // Create or update a new wallet transaction for this payment
+            WalletTransaction::updateOrCreate(
+                [
+                    'id' => $walletWithdrawal->wallet_transaction_id ?: null,
+                ],
+                [
+                    'user_id' => $walletWithdrawal->user_id,
+                    'type' => 'withdrawal',
+                    'status' => 'approved',
+                    'source' => 'wallet withdrawal',
+                    'reference_id' => $walletWithdrawal->id,
+                ],
+                [
+                    'amount' => $amount,
+                    'note' => 'Withdrawal completed',
+                ]
+            );
+
+            // Optionally, you can also update the user's wallet balance here
+            Wallet::where('user_id', $walletWithdrawal->user_id)
+                ->decrement('balance', $amount);
+
+            Toast::success('Payment details submitted successfully. Please wait for admin approval.');
+            
+            return redirect()->route('platform.funds.payment_details');
 
             // Toast::info('Payment details submitted successfully. Please wait for admin approval.');
             // return redirect()->route('platform.wallet'); // Redirect to the funds screen
@@ -151,11 +170,5 @@ class PaymentDetailsScreen extends Screen
             Toast::error('Attachment not found.');
             return back()->withInput();
         }
-    }
-
-
-    public function redirectToWallet()
-    {
-        return redirect()->route('platform.wallet');
     }
 }

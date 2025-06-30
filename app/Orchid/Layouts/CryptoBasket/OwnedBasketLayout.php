@@ -55,6 +55,18 @@ class OwnedBasketLayout extends Table
                         return $cycle['months'] . ' months (' . $cycle['return_percentage'] . '%)';
                     })->implode(', ');
                 }),
+
+            TD::make('withdraw', 'Withdrawal')
+                ->render(function ($ownedBaskets) {
+                    return Button::make('Withdraw')
+                        ->icon('bs.currency-exchange')
+                        ->type(Color::PRIMARY) // Makes the button blue and modern
+                        ->size('sm')           // Optional: makes the button smaller and sleeker
+                        ->method('withdraw', [
+                            'id' => $ownedBaskets->id,
+                        ])
+                        ->confirm('Are you sure you want to withdraw from this basket?');
+                }),
         ];
     }
 }
