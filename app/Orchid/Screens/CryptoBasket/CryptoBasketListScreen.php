@@ -70,8 +70,7 @@ class CryptoBasketListScreen extends Screen
                 ->async('asyncBuyBasketModal')
                 ->title(__('Buy Basket'))
                 ->applyButton(__('Buy'))
-                ->closeButton(__('Close'))
-                ->size(Modal::SIZE_LG),
+                ->closeButton(__('Close')),
         ];
     }
 

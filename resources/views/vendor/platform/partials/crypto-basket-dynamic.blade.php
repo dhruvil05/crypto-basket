@@ -256,7 +256,7 @@
     //     }
     // }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('turbo:load', function () {
         // Init select2 on page load
         initSelect2();
 
