@@ -177,11 +177,11 @@ Route::screen('/owned-baskets', OwnedBasketScreen::class)
         ->parent('platform.index')
         ->push(__('Owned Baskets'), route('platform.owned-baskets')));
 
-Route::screen('pending-request', PendingRequestScreen::class)
+Route::screen('fund-request', PendingRequestScreen::class)
     ->name('platform.systems.pending.requests')
     ->breadcrumbs(fn($trail) => $trail
         ->parent('platform.index')
-        ->push(__('Pending Requests'), route('platform.systems.pending.requests')));
+        ->push(__('Fund Requests'), route('platform.systems.pending.requests')));
 
 Route::screen('profile/kyc', KycSubmissionScreen::class)
     ->name('platform.user.kyc')

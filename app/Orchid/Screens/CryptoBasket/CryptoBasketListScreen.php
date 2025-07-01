@@ -91,7 +91,8 @@ class CryptoBasketListScreen extends Screen
     {
         $basketId = $request?->input('basket_id');
         $amount = $request?->input('amount');
-        $selectedCycles = array_keys($request->input('return_cycles', []));
+        // $selectedCycles = array_keys($request->input('return_cycles', []));
+        $selectedCycleId = $request->input('return_cycle_id');
         $user = auth()?->user();
 
         if (!isKycApproved($user->id)) {
@@ -102,7 +103,8 @@ class CryptoBasketListScreen extends Screen
         $request->validate([
             'basket_id' => 'required|exists:crypto_baskets,id',
             'amount' => 'required|numeric|min:1',
-            'return_cycles' => 'required|array',
+            // 'return_cycles' => 'required|array',
+            'return_cycle_id' => 'required|integer',
         ],
         [
             'basket_id.required' => 'The basket ID is required.',
@@ -110,7 +112,8 @@ class CryptoBasketListScreen extends Screen
             'amount.required' => 'The investment amount is required.',
             'amount.numeric' => 'The investment amount must be a number.',
             'amount.min' => 'The investment amount must be at least 1.',
-            'return_cycles.required' => 'Please select at least one return cycle.',
+            // 'return_cycles.required' => 'Please select at least one return cycle.',
+            'return_cycle_id.required' => 'Please select a return cycle.',
         ]);
 
         $wallet = Wallet::where('user_id', $user->id)->first();
@@ -123,7 +126,8 @@ class CryptoBasketListScreen extends Screen
         $basket = CryptoBasket::with('items')->findOrFail($basketId);
 
         $selectedReturnCycles = $basket->returnCycles
-            ->whereIn('id', $selectedCycles)
+            // ->whereIn('id', $selectedCycles)
+            ->where('id', $selectedCycleId)
             ->values()
             ->map(function ($cycle) {
                 return [

@@ -81,7 +81,7 @@ class PlatformProvider extends OrchidServiceProvider
                 ->route('platform.owned-baskets')
                 ->permission('platform.owned-baskets'),
 
-            Menu::make(__('Pending Requests'))
+            Menu::make(__('Fund Requests'))
                 ->icon('bs.hourglass-split')
                 ->title('User Requests')
                 ->route('platform.systems.pending.requests')

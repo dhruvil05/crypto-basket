@@ -67,15 +67,16 @@
                 <input type="number" class="form-control percentage-input" value="${cycle.return_percentage}" required min="0" step="0.01">
             </div>
             <div class="col-md-2 d-flex align-items-center">
-                <button type="button" class="btn btn-danger" onclick="removeReturnCycle(this)">
+                <button type="button" class="btn btn-danger remove-btn" onclick="removeReturnCycle(this)">
                     <x-orchid-icon path="bs.trash" class="small"/>
-                    </button>
+                </button>
             </div>
         `;
 
 
         document.getElementById('return-cycles-container').appendChild(container);
         updateReturnCyclesJson();
+        updateRemoveButtons();
     }
 
     window.addReturnCycle = function () {
@@ -86,6 +87,7 @@
         const row = button.closest('.return-cycle-row');
         row.remove();
         updateReturnCyclesJson();
+        updateRemoveButtons();
     };
 
     function updateReturnCyclesJson() {
@@ -112,13 +114,26 @@
         if (existingCycles.length > 0) {
             existingCycles.forEach(cycle => createCycleRow(cycle));
         } else {
-            defaultMonths.forEach(month => {
-                createCycleRow({ months: month, return_percentage: '' });
-            });
+            createCycleRow();
+            // defaultMonths.forEach(month => {
+            //     createCycleRow({ months: month, return_percentage: '' });
+            // });
         }
 
         container.addEventListener('input', updateReturnCyclesJson);
+        updateRemoveButtons();
     }
+
+
+    function updateRemoveButtons() {
+        const allButtons = document.querySelectorAll('.remove-btn');
+        if (allButtons.length <= 1) {
+            allButtons.forEach(btn => btn.style.display = 'none');
+        } else {
+            allButtons.forEach(btn => btn.style.display = 'inline-block');
+        }
+    }
+
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initializeReturnCycleFields);

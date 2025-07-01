@@ -35,7 +35,7 @@ class PendingRequestScreen extends Screen
      */
     public function name(): ?string
     {
-        return 'Pending Requests';
+        return 'Fund Requests';
     }
 
     /**

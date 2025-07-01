@@ -159,53 +159,108 @@
         row.querySelector('.coin-name-field').value = selected.getAttribute('data-name') || '';
     }
 
+    function updateDeleteButtonVisibility() {
+        const rows = document.querySelectorAll('.crypto-basket-row');
+        const deleteButtons = document.querySelectorAll('.remove-row');
+        if (rows.length <= 1) {
+            deleteButtons.forEach(btn => btn.style.display = 'none');
+        } else {
+            deleteButtons.forEach(btn => btn.style.display = 'inline-block');
+        }
+    }
+
     function addCryptoRow() {
-        // Use the first row as template
         let firstRow = document.querySelector('.crypto-basket-row');
+        let clone = firstRow.cloneNode(true);
 
-        // Get clean HTML (without Select2 wrapper elements)
-        let cloneHtml = firstRow.cloneNode(true).outerHTML;
+        // Reset values
+        let select = clone.querySelector('select');
+        select.selectedIndex = 0;
+        clone.querySelector('input[type=number]').value = '';
+        clone.querySelector('.coin-id-field').value = '';
+        clone.querySelector('.coin-name-field').value = '';
 
-        // Insert the HTML to the container
-        document.getElementById('crypto-basket-rows').insertAdjacentHTML('beforeend', cloneHtml);
+        // Remove old select2 container
+        $(clone).find('select.select2').next('.select2-container').remove();
 
-        // Get the last added row (just inserted)
-        let newRow = document.querySelectorAll('.crypto-basket-row');
-        let addedRow = newRow[newRow.length - 1];
+        // Append to container
+        document.getElementById('crypto-basket-rows').appendChild(clone);
 
-        // Reset the inputs
-        addedRow.querySelector('select').selectedIndex = 0;
-        addedRow.querySelector('.coin-id-field').value = '';
-        addedRow.querySelector('.coin-name-field').value = '';
-        addedRow.querySelector('input[type=number]').value = '';
-
-        // Remove existing Select2 to avoid duplicates
-        $(addedRow).find('select.select2').next('.select2-container').remove();
-
-        // Re-initialize Select2 for the new select box
-        $(addedRow).find('select.select2').select2({
+        // Reinitialize select2
+        $(clone).find('select.select2').select2({
             placeholder: 'Select Cryptocurrency',
             allowClear: true,
             width: '100%'
         });
 
-        // Rebind change handler
-        addedRow.querySelector('select').addEventListener('change', function () {
+        // Bind change event
+        clone.querySelector('select').addEventListener('change', function () {
             updateHiddenFields(this);
         });
 
-        // Set hidden fields based on initial select
-        updateHiddenFields(addedRow.querySelector('select'));
+        // Ensure correct delete button visibility
+        updateDeleteButtonVisibility();
     }
 
+    // function addCryptoRow() {
+    //     // Use the first row as template
+    //     let firstRow = document.querySelector('.crypto-basket-row');
+
+    //     // Get clean HTML (without Select2 wrapper elements)
+    //     let cloneHtml = firstRow.cloneNode(true).outerHTML;
+
+    //     // Insert the HTML to the container
+    //     document.getElementById('crypto-basket-rows').insertAdjacentHTML('beforeend', cloneHtml);
+
+    //     // Get the last added row (just inserted)
+    //     let newRow = document.querySelectorAll('.crypto-basket-row');
+    //     let addedRow = newRow[newRow.length - 1];
+
+    //     // Reset the inputs
+    //     addedRow.querySelector('select').selectedIndex = 0;
+    //     addedRow.querySelector('.coin-id-field').value = '';
+    //     addedRow.querySelector('.coin-name-field').value = '';
+    //     addedRow.querySelector('input[type=number]').value = '';
+
+    //     // Remove existing Select2 to avoid duplicates
+    //     $(addedRow).find('select.select2').next('.select2-container').remove();
+
+    //     // Re-initialize Select2 for the new select box
+    //     $(addedRow).find('select.select2').select2({
+    //         placeholder: 'Select Cryptocurrency',
+    //         allowClear: true,
+    //         width: '100%'
+    //     });
+
+    //     // Rebind change handler
+    //     addedRow.querySelector('select').addEventListener('change', function () {
+    //         updateHiddenFields(this);
+    //     });
+
+    //     // Set hidden fields based on initial select
+    //     updateHiddenFields(addedRow.querySelector('select'));
+    // }
+
     function removeCryptoRow(btn) {
-        const rows = document.querySelectorAll('.crypto-basket-row');
+        let rows = document.querySelectorAll('.crypto-basket-row');
         if (rows.length > 1) {
             btn.closest('.crypto-basket-row').remove();
+            updateDeleteButtonVisibility();
         }
     }
 
-    document.addEventListener('turbo:load', function () {
+    // function removeCryptoRow(btn) {
+    //     const rows = document.querySelectorAll('.crypto-basket-row');
+    //     if (rows.length > 1) {
+    //         btn.closest('.crypto-basket-row').remove();
+    //     }
+    // }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Init select2 on page load
+        initSelect2();
+
+        // Init hidden fields and bind change events
         document.querySelectorAll('.crypto-select').forEach(function (select) {
             updateHiddenFields(select);
             select.addEventListener('change', function () {
@@ -213,8 +268,20 @@
             });
         });
 
-        initSelect2(); // Init once on page load
+        // Control initial delete visibility
+        updateDeleteButtonVisibility();
     });
+
+    // document.addEventListener('turbo:load', function () {
+    //     document.querySelectorAll('.crypto-select').forEach(function (select) {
+    //         updateHiddenFields(select);
+    //         select.addEventListener('change', function () {
+    //             updateHiddenFields(this);
+    //         });
+    //     });
+
+    //     initSelect2(); // Init once on page load
+    // });
 </script>
 
 {{-- <div id="crypto-basket-rows">
