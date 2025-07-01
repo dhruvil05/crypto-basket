@@ -81,19 +81,9 @@ class PlatformProvider extends OrchidServiceProvider
                 ->route('platform.owned-baskets')
                 ->permission('platform.owned-baskets'),
 
-            Menu::make(__('Users'))
-                ->icon('bs.people')
-                ->route('platform.systems.users')
-                ->permission('platform.systems.users')
-                ->title(__('Access Controls')),
-
-            Menu::make(__('Roles'))
-                ->icon('bs.shield')
-                ->route('platform.systems.roles')
-                ->permission('platform.systems.roles'),
-
             Menu::make(__('Pending Requests'))
                 ->icon('bs.hourglass-split')
+                ->title('User Requests')
                 ->route('platform.systems.pending.requests')
                 ->permission('platform.systems.pending.requests'),
 
@@ -106,6 +96,17 @@ class PlatformProvider extends OrchidServiceProvider
                 ->icon('bs.shield-lock')
                 ->route('platform.user.kyc.requests')
                 ->permission('platform.user.kyc.requests'),
+
+            Menu::make(__('Users'))
+                ->icon('bs.people')
+                ->route('platform.systems.users')
+                ->permission('platform.systems.users')
+                ->title(__('Access Controls')),
+
+            Menu::make(__('Roles'))
+                ->icon('bs.shield')
+                ->route('platform.systems.roles')
+                ->permission('platform.systems.roles'),
 
             Menu::make(__('Referral Settings'))
                 ->icon('bs.percent')

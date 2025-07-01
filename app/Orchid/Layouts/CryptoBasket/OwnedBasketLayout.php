@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Orchid\Layouts\CryptoBasket;
 
 use App\Models\CryptoBasket;
+use Carbon\Carbon;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\DropDown;
 use Orchid\Screen\Actions\Link;
@@ -58,15 +59,29 @@ class OwnedBasketLayout extends Table
 
             TD::make('withdraw', 'Withdrawal')
                 ->render(function ($ownedBaskets) {
+                    $canWithdraw = false;
+
+                    // Decode snapshot JSON from the basket (or use $ownedBaskets->snapshot if available)
+                    $snapshot = json_decode($ownedBaskets->snapshot, true);
+
+                    if ($snapshot && isset($snapshot['return_cycles'][0]['months'])) {
+                        $returnMonths = (int) $snapshot['return_cycles'][0]['months'];
+
+                        $createdAt = Carbon::parse($ownedBaskets->created_at);
+                        $unlockDate = $createdAt->addMonths($returnMonths);
+
+                        $canWithdraw = now()->greaterThanOrEqualTo($unlockDate);
+                    }
+
                     return Button::make('Withdraw')
                         ->icon('bs.currency-exchange')
-                        ->type(Color::PRIMARY) // Makes the button blue and modern
-                        ->size('sm')           // Optional: makes the button smaller and sleeker
-                        ->method('withdraw', [
-                            'id' => $ownedBaskets->id,
-                        ])
-                        ->confirm('Are you sure you want to withdraw from this basket?');
+                        ->class('badge bg-primary bg-opacity-10 text-primary rounded border border-primary px-3 py-2 btn fw-bold shadow')
+                        ->size('sm')
+                        ->method('withdraw', ['id' => $ownedBaskets->id])
+                        ->confirm('Are you sure you want to withdraw from this basket?')
+                        ->canSee($canWithdraw); // Disable if not yet eligible
                 }),
+
         ];
     }
 }

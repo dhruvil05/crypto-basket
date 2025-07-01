@@ -60,7 +60,7 @@ class CryptoBasketListLayout extends Table
                         ->method('buyBasket')
                         ->modalTitle('Invest in ' . $cryptoBasket->name)
                         ->icon('bs.cart-plus')
-                        ->class('btn btn-success shadow rounded-1')
+                        ->class('badge bg-success bg-opacity-10 text-success rounded border border-success px-3 py-2 btn fw-bold shadow')
                         ->asyncParameters([
                             'basket_id' => $cryptoBasket->id,
                         ]);
