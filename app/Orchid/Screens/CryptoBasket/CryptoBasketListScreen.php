@@ -158,6 +158,7 @@ class CryptoBasketListScreen extends Screen
         $walletTransaction->user_id = $user->id;
         $walletTransaction->type = 'purchase';
         $walletTransaction->amount = $amount;
+        $walletTransaction->status = 'completed';
         $walletTransaction->source = 'basket_purchase';
         $walletTransaction->reference_id = $basketId; // Reference to the basket purchased
         $walletTransaction->note = 'Purchased crypto basket: ' . $snapshot['name'];

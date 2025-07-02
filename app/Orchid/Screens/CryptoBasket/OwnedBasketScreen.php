@@ -121,9 +121,9 @@ class OwnedBasketScreen extends Screen
         WalletTransaction::create([
             'user_id' => $user->id,
             'amount' => $withdrawalAmount,
-            'type' => 'credit',
-            'note' => 'Basket withdrawal for: ' . $basketPurchase->cryptoBasket->name,
-            'status' => 'approved',
+            'type' => 'cash out',
+            'note' => 'Cash out from basket: ' . $basketPurchase->cryptoBasket->name,
+            'status' => 'completed',
             'source' => 'basket_withdrawal',
             'reference_id' => $basketPurchase->id,
 

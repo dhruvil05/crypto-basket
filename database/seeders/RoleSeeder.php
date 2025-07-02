@@ -18,13 +18,20 @@ class RoleSeeder extends Seeder
                 'name' => 'Admin',
                 'slug' => 'admin',
                 'permissions' => [
-                    'platform.systems.settings' => true,
                     'platform.systems.roles' => true,
                     'platform.systems.users' => true,
+                    'platform.systems.settings' => true,
+                    'platform.index' => true,
+                    'platform.systems.attachment' => true,
+                    'platform.systems.logs' => true,
+                    'platform.systems.tools' => true,
+                    'platform.systems.pending.requests' => true,
                     'platform.owned-baskets' => true,
                     'platform.funds.wallet' => true,
                     'platform.funds.edit' => true,
-                    'platform.index' => true,
+                    'platform.user.kyc.requests' => true,
+                    'platform.funds.direct.add' => true,
+                    'platform.fund.withdraw_requests' => true,
                 ]
             ],
             [

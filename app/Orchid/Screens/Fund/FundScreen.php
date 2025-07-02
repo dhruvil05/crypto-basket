@@ -35,6 +35,7 @@ class FundScreen extends Screen
         }
 
         $walletTransactions = WalletTransaction::where('user_id', auth()->user()?->id)
+            ->whereIn('type', ['credit', 'debit', 'deposit', 'refund', 'withdraw'])
             ->whereNotNull('status')
             ->latest()
             ->paginate(5);
@@ -132,7 +133,7 @@ class FundScreen extends Screen
         $WalletTransaction = WalletTransaction::create([
             'user_id' => $user->id,
             'amount' => $withdrawalAmount,
-            'type' => 'withdrawal',
+            'type' => 'withdraw',
             'note' => 'Withdrawal request',
             'status' => 'pending',
             'source' => 'wallet withdrawal'

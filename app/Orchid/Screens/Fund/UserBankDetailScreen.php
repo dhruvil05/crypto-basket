@@ -145,8 +145,8 @@ class UserBankDetailScreen extends Screen
                 ],
                 [
                     'user_id' => $walletWithdrawal->user_id,
-                    'type' => 'withdrawal',
-                    'status' => 'approved',
+                    'type' => 'withdraw',
+                    'status' => 'completed',
                     'source' => 'wallet withdrawal',
                     'reference_id' => $walletWithdrawal->id,
                 ],

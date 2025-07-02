@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('wallet_transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->enum('type', ['credit', 'debit', 'deposit', 'withdrawal', 'purchase', 'refund']);
+            $table->enum('type', ['credit', 'debit', 'deposit', 'withdraw', 'purchase', 'refund', 'cash out']);
             $table->decimal('amount', 12, 2);
             $table->boolean('amount_added')->default(false); 
 
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('screenshot')->nullable();
 
             // Only applicable for credit (adding funds)
-            $table->enum('status', ['pending', 'approved', 'rejected'])->nullable();
+            $table->enum('status', ['pending', 'approved', 'rejected', 'completed', 'in progress'])->nullable();
             $table->text('admin_comment')->nullable();
             $table->timestamp('reviewed_at')->nullable();
             $table->foreignId('reviewed_by')->nullable()->constrained('users')->nullOnDelete();

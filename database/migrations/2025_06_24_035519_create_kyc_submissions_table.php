@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('bank_account_number')->nullable();
             $table->string('bank_ifsc')->nullable();
             $table->string('bank_name')->nullable();
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->enum('status', ['pending', 'approved', 'rejected', 'completed'])->default('pending');
             $table->text('admin_comment')->nullable();
             $table->timestamp('submitted_at')->nullable();
             $table->timestamps();

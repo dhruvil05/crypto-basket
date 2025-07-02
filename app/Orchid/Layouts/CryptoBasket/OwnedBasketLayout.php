@@ -73,13 +73,12 @@ class OwnedBasketLayout extends Table
                         $canWithdraw = now()->greaterThanOrEqualTo($unlockDate);
                     }
 
-                    return Button::make('Withdraw')
+                    return Button::make('Sell')
                         ->icon('bs.currency-exchange')
-                        ->class('badge bg-primary bg-opacity-10 text-primary rounded border border-primary px-3 py-2 btn fw-bold shadow')
-                        ->size('sm')
+                        ->class('badge bg-danger bg-opacity-10 text-danger rounded border border-danger px-3 py-2 btn fw-bold shadow')
                         ->method('withdraw', ['id' => $ownedBaskets->id])
-                        ->confirm('Are you sure you want to withdraw from this basket?')
-                        ->canSee($canWithdraw); // Disable if not yet eligible
+                        ->confirm('Are you sure you want to withdraw from this basket?');
+                        // ->canSee($canWithdraw); // Disable if not yet eligible
                 }),
 
         ];

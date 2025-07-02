@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('basket_purchase_id')->constrained()->onDelete('cascade');
             $table->decimal('amount', 16, 8);
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->enum('status', ['pending', 'approved', 'rejected', 'completed'])->default('pending');
 
             $table->timestamps();
         });
