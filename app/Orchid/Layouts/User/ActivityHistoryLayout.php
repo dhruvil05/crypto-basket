@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace App\Orchid\Layouts\User;
 
 use App\Models\WalletTransaction;
+use App\Models\WalletWithdrawal;
+use Orchid\Screen\Actions\ModalToggle;
 use Orchid\Screen\Components\Cells\DateTimeSplit;
 use Orchid\Screen\Fields\Input;
+use Orchid\Screen\Layouts\Persona;
 use Orchid\Screen\Layouts\Table;
 use Orchid\Screen\TD;
 
@@ -26,7 +29,19 @@ class ActivityHistoryLayout extends Table
             TD::make('type', __('Type'))
                 ->sort()
                 ->cantHide()
-                ->filter(Input::make()),
+                ->filter(Input::make())
+                ->render(function (WalletTransaction $tx) {
+                    if ($tx->type === 'withdraw' && $tx->reference_id) {
+                        return ModalToggle::make('Withdraw')
+                            ->modal('withdrawDetailsModal') 
+                            ->modalTitle('Withdrawal Details')
+                            ->async('loadWithdrawDetails')
+                            ->asyncParameters([
+                                'withdrawal_id' => $tx->reference_id,
+                            ]);
+                    }
+                    return ucfirst($tx->type);
+                }),
 
             TD::make('amount', __('Amount'))
                 ->render(fn(WalletTransaction $tx) => '₹' . number_format((float)$tx->amount, 2) . ' ($' . number_format(inr_to_usd((float)$tx->amount), 2) . ')')
