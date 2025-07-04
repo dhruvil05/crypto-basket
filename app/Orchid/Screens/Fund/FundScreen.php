@@ -64,19 +64,41 @@ class FundScreen extends Screen
     public function commandBar(): iterable
     {
         return [
+            // Link::make(__('Add Funds'))
+            //     ->icon('bs.cash-stack')
+            //     ->route('platform.funds.payment_details')
+            //     ->canSee(auth()->user()?->hasAccess('platform.funds.wallet')),
+
+            // ModalToggle::make('Withdraw Funds')
+            //     ->modal('withdrawalModal')
+            //     ->method('withdrawalRequest')
+            //     ->icon('bs.check-circle'),
+
+            // Link::make(__('Activity History'))
+            //     ->icon('bs.clock-history')
+            //     ->route('platform.funds.activity_history')
+            //     ->canSee(auth()->user()?->hasAccess('platform.funds.wallet')),
+
+
             Link::make(__('Add Funds'))
                 ->icon('bs.cash-stack')
                 ->route('platform.funds.payment_details')
+                ->class('btn btn-success rounded px-3 py-2 me-2')
+                ->style('gap: 8px; transition: transform 0.2s ease;')
                 ->canSee(auth()->user()?->hasAccess('platform.funds.wallet')),
 
             ModalToggle::make('Withdraw Funds')
                 ->modal('withdrawalModal')
                 ->method('withdrawalRequest')
-                ->icon('bs.check-circle'),
+                ->icon('bs.arrow-down-circle')
+                ->class('btn btn-warning rounded px-3 py-2 me-2')
+                ->style('gap: 8px; transition: transform 0.2s ease;'),
 
             Link::make(__('Activity History'))
                 ->icon('bs.clock-history')
                 ->route('platform.funds.activity_history')
+                ->class('btn btn-info rounded px-3 py-2')
+                ->style('gap: 8px; transition: transform 0.2s ease;')
                 ->canSee(auth()->user()?->hasAccess('platform.funds.wallet')),
 
 

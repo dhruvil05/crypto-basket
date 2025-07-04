@@ -133,7 +133,9 @@
         </div>
 
         <!-- Add Button -->
-        <button type="button" class="btn btn-primary mt-2" onclick="addCryptoRow()"><x-orchid-icon path="bs.plus-circle" class="w-6 h-6 me-1"/> Add Currency</button>
+        {{-- <button type="button" class="btn btn-primary mt-2" onclick="addCryptoRow()"><x-orchid-icon path="bs.plus-circle" class="w-6 h-6 me-1"/> Add Currency</button> --}}
+
+        <button type="button" class="btn btn-info rounded px-4 py-2 fw-bold mt-3" onclick="addCryptoRow()"><x-orchid-icon path="bs.plus-circle" class="w-6 h-6 me-1"/> Add Currency</button>
     </div>
 </div>
 

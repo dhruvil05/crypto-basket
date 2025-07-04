@@ -51,16 +51,45 @@ class CryptoBasketListLayout extends Table
                 ->defaultHidden()
                 ->sort(),
 
+            // TD::make(__('Purchase'))
+            //     ->align(TD::ALIGN_CENTER)
+            //     ->width('100px')
+            //     ->render(function (CryptoBasket $cryptoBasket) {
+            //         return ModalToggle::make('Buy')
+            //             ->modal('buyBasketModal')
+            //             ->method('buyBasket')
+            //             ->modalTitle('Invest in ' . $cryptoBasket->name)
+            //             ->icon('bs.cart-plus')
+            //             ->class('badge bg-success bg-opacity-10 text-success rounded border border-success px-3 py-2 btn fw-bold shadow')
+            //             ->asyncParameters([
+            //                 'basket_id' => $cryptoBasket->id,
+            //             ]);
+            //     }),
+
             TD::make(__('Purchase'))
                 ->align(TD::ALIGN_CENTER)
                 ->width('100px')
                 ->render(function (CryptoBasket $cryptoBasket) {
-                    return ModalToggle::make('Buy')
+                    $buttonId = 'buy-btn-' . $cryptoBasket->id;
+                    
+                    $styles = "<style>
+                        #{$buttonId} {
+                            gap: 6px !important;
+                            display: inline-flex !important;
+                            align-items: center !important;
+                        }
+                        #{$buttonId}:hover {
+                            background-color: rgba(25, 135, 84, 0.2) !important;
+                        }
+                    </style>";
+                    
+                    return $styles . ModalToggle::make('Buy')
                         ->modal('buyBasketModal')
                         ->method('buyBasket')
                         ->modalTitle('Invest in ' . $cryptoBasket->name)
                         ->icon('bs.cart-plus')
-                        ->class('badge bg-success bg-opacity-10 text-success rounded border border-success px-3 py-2 btn fw-bold shadow')
+                        ->class('badge bg-success bg-opacity-10 text-success rounded border border-success px-3 py-2 btn fw-bold')
+                        ->id($buttonId)
                         ->asyncParameters([
                             'basket_id' => $cryptoBasket->id,
                         ]);

@@ -2,6 +2,7 @@
 
 namespace App\Orchid\Screens\Fund;
 
+use App\Models\WalletWithdrawal;
 use App\Orchid\Layouts\Fund\WithdrawRequestsLayout;
 use Orchid\Screen\Screen;
 
@@ -14,9 +15,7 @@ class WithdrawRequestsScreen extends Screen
      */
     public function query(): iterable
     {
-        $withdrawRequests = auth()->user()
-            ->walletWithdrawals()
-            ->where('status', 'pending') // Exclude pending requests
+        $withdrawRequests = WalletWithdrawal::where('status', 'pending') // Exclude pending requests
             ->with('user')
             ->latest()
             ->paginate(10);

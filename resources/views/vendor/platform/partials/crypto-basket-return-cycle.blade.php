@@ -24,7 +24,9 @@
         <div id="return-cycles-wrapper">
             <div id="return-cycles-container"></div>
 
-            <button type="button" class="btn btn-primary mt-3" onclick="addReturnCycle()"><x-orchid-icon path="bs.plus-circle" class="w-6 h-6 me-1"/> Add Return Cycle</button>
+            {{-- <button type="button" class="btn btn-primary mt-3" onclick="addReturnCycle()"><x-orchid-icon path="bs.plus-circle" class="w-6 h-6 me-1"/> Add Return Cycle</button> --}}
+
+            <button type="button" class="btn btn-info rounded px-4 py-2 fw-bold mt-3" onclick="addReturnCycle()"><x-orchid-icon path="bs.plus-circle" class="w-6 h-6 me-1"/> Add Return Cycle</button>
 
             <!-- Hidden input for submitting JSON -->
             <input type="hidden" name="return_cycles_json" id="return_cycles_json">
@@ -64,7 +66,7 @@
             </div>
             <div class="col-md-4 d-flex align-items-center gap-2">
                 <label class="mb-0" style="min-width: 75px;">Return (%)<span class="text-danger">*</span></label>
-                <input type="number" class="form-control percentage-input" value="${cycle.return_percentage}" required min="0" step="0.01">
+                <input type="number" class="form-control percentage-input" placeholder="%" value="${cycle.return_percentage}" required min="0" step="0.01">
             </div>
             <div class="col-md-2 d-flex align-items-center">
                 <button type="button" class="btn btn-danger remove-btn" onclick="removeReturnCycle(this)">
@@ -114,10 +116,9 @@
         if (existingCycles.length > 0) {
             existingCycles.forEach(cycle => createCycleRow(cycle));
         } else {
-            createCycleRow();
-            // defaultMonths.forEach(month => {
-            //     createCycleRow({ months: month, return_percentage: '' });
-            // });
+            defaultMonths.forEach(month => {
+                createCycleRow({ months: month, return_percentage: '' });
+            });
         }
 
         container.addEventListener('input', updateReturnCyclesJson);

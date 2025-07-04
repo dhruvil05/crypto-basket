@@ -55,7 +55,9 @@ class PaymentDetailsScreen extends Screen
             ModalToggle::make('Confirm Payment')
                 ->modal('confirmPaymentModal')
                 ->method('confirmPayment')
-                ->icon('bs.check-circle'),
+                ->icon('bs.check-circle')
+                ->class('btn btn-info rounded px-4 py-2 fw-bold')
+                ->style('gap: 8px; transition: transform 0.2s ease;'),
         ];
     }
 
@@ -143,7 +145,7 @@ class PaymentDetailsScreen extends Screen
             ]);
 
             session()->flash('showSuccessModal', true);
-            return redirect()->route('platform.fund.withdraw_requests');
+            return redirect()->route('platform.funds.payment_details');
 
             // Toast::info('Payment details submitted successfully. Please wait for admin approval.');
             // return redirect()->route('platform.wallet'); // Redirect to the funds screen

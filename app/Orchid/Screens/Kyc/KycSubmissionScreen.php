@@ -43,7 +43,9 @@ class KycSubmissionScreen extends Screen
         return [
             Button::make(__('Save'))
                 ->icon('bs.check-circle')
-                ->method('save'),
+                ->method('save')
+                ->class('btn btn-info rounded px-4 py-2 fw-bold')
+                ->style('gap: 8px; transition: transform 0.2s ease;'),
         ];
     }
 

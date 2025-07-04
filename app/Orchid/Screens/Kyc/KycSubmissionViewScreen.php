@@ -74,6 +74,8 @@ class KycSubmissionViewScreen extends Screen
                         ->type(Color::BASIC())
                         ->icon('bs.check-circle')
                         ->method('updateKycStatus')
+                        ->class('btn btn-info rounded px-4 py-2 fw-bold')
+                        ->style('gap: 8px; transition: transform 0.2s ease;')
                 ),
 
         ];

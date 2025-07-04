@@ -78,17 +78,23 @@ class UserEditScreen extends Screen
                 ->icon('bg.box-arrow-in-right')
                 ->confirm(__('You can revert to your original state by logging out.'))
                 ->method('loginAs')
+                ->class('btn btn-info rounded px-4 py-2 fw-bold')
+                ->style('gap: 8px; transition: transform 0.2s ease;')
                 ->canSee($this->user->exists && $this->user->id !== \request()->user()->id),
 
             Button::make(__('Remove'))
                 ->icon('bs.trash3')
                 ->confirm(__('Once the account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.'))
                 ->method('remove')
+                ->class('btn btn-info rounded px-4 py-2 fw-bold')
+                ->style('gap: 8px; transition: transform 0.2s ease;')
                 ->canSee($this->user->exists),
 
             Button::make(__('Save'))
                 ->icon('bs.check-circle')
-                ->method('save'),
+                ->method('save')
+                ->class('btn btn-info rounded px-4 py-2 fw-bold')
+                ->style('gap: 8px; transition: transform 0.2s ease;'),
         ];
     }
 
@@ -108,6 +114,8 @@ class UserEditScreen extends Screen
                         ->icon('bs.check-circle')
                         ->canSee($this->user->exists)
                         ->method('save')
+                        ->class('btn btn-info rounded px-4 py-2 fw-bold')
+                        ->style('gap: 8px; transition: transform 0.2s ease;')
                 ),
 
             Layout::block(UserPasswordLayout::class)
@@ -119,6 +127,8 @@ class UserEditScreen extends Screen
                         ->icon('bs.check-circle')
                         ->canSee($this->user->exists)
                         ->method('save')
+                        ->class('btn btn-info rounded px-4 py-2 fw-bold')
+                        ->style('gap: 8px; transition: transform 0.2s ease;')
                 ),
 
             Layout::block(UserRoleLayout::class)
@@ -130,6 +140,8 @@ class UserEditScreen extends Screen
                         ->icon('bs.check-circle')
                         ->canSee($this->user->exists)
                         ->method('save')
+                        ->class('btn btn-info rounded px-4 py-2 fw-bold')
+                        ->style('gap: 8px; transition: transform 0.2s ease;')
                 ),
 
             Layout::block(RolePermissionLayout::class)
@@ -141,6 +153,8 @@ class UserEditScreen extends Screen
                         ->icon('bs.check-circle')
                         ->canSee($this->user->exists)
                         ->method('save')
+                        ->class('btn btn-info rounded px-4 py-2 fw-bold')
+                        ->style('gap: 8px; transition: transform 0.2s ease;')
                 ),
 
         ];

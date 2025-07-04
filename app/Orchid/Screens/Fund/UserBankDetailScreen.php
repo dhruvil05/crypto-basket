@@ -60,7 +60,9 @@ class UserBankDetailScreen extends Screen
             ModalToggle::make('Confirm Payment')
                 ->modal('confirmPaymentModal')
                 ->method('confirmPayment')
-                ->icon('bs.check-circle'),
+                ->icon('bs.check-circle')
+                ->class('btn btn-info rounded px-4 py-2 fw-bold')
+                ->style('gap: 8px; transition: transform 0.2s ease;'),
         ];
     }
 

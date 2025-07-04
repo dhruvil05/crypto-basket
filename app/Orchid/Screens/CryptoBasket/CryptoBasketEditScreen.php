@@ -115,9 +115,16 @@ class CryptoBasketEditScreen extends Screen
     public function commandBar(): iterable
     {
         return [
+            // Button::make('Save')
+            //     ->icon('bs.save')
+            //     ->method('save')
+            //     ->canSee(auth()->user() && auth()->user()->hasAccess('platform.systems.users')),
+
             Button::make('Save')
-                ->icon('bs.save')
+                ->icon('bs.save-fill')
                 ->method('save')
+                ->class('btn btn-info rounded px-4 py-2 fw-bold')
+                ->style('gap: 8px; transition: transform 0.2s ease;')
                 ->canSee(auth()->user() && auth()->user()->hasAccess('platform.systems.users')),
         ];
     }

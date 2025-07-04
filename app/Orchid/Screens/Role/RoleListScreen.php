@@ -57,6 +57,8 @@ class RoleListScreen extends Screen
         return [
             Link::make(__('Add'))
                 ->icon('bs.plus-circle')
+                ->class('btn btn-info rounded px-4 py-2 fw-bold')
+                ->style('gap: 8px; transition: transform 0.2s ease;')
                 ->href(route('platform.systems.roles.create')),
         ];
     }

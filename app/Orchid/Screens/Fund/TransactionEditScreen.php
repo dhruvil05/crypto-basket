@@ -83,8 +83,10 @@ class TransactionEditScreen extends Screen
                 ->description(__("Update the amount for this transaction."))
                 ->commands([
                     Button::make(__('Save'))
-                        ->icon('check')
+                        ->icon('bs.check-circle')
                         ->method('updateTransactionAmount')
+                        ->class('btn btn-info rounded px-4 py-2 fw-bold')
+                        ->style('gap: 8px; transition: transform 0.2s ease;')
                         ->confirm(__('Are you sure you want to update this transaction?'))
                         ->parameters(['transaction_id' => request()->route('transaction')]),
                 ])
@@ -95,8 +97,10 @@ class TransactionEditScreen extends Screen
                 ->description(__("Update the status of the transaction."))
                 ->commands([
                     Button::make(__('Save'))
-                        ->icon('check')
+                        ->icon('bs.check-circle')
                         ->method('transactionStatus')
+                        ->class('btn btn-info rounded px-4 py-2 fw-bold')
+                        ->style('gap: 8px; transition: transform 0.2s ease;')
                         ->confirm(__('Are you sure you want to update this transaction?'))
                         ->parameters(['transaction_id' => request()->route('transaction')]),
                 ])
@@ -179,6 +183,15 @@ class TransactionEditScreen extends Screen
 
                     $transaction->amount_added = false; // Reset the flag
                     Toast::info(__('Transaction rejected and amount subtracted from wallet.'));
+                }
+                
+            } elseif ($status === 'pending' && $oldStatus === 'approved' && $transaction->amount_added) {
+                if ($wallet) {
+                    $wallet->balance -= $transaction->amount;
+                    $wallet->save();
+
+                    $transaction->amount_added = false; // Reset the flag
+                    Toast::info(__('Transaction pending and amount subtracted from wallet.'));
                 }
             } else {
                 Toast::info(__('Transaction status updated.'));

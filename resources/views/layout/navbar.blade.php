@@ -4,7 +4,7 @@
         <ul class="nav-links">
             @if (auth()->check())
                 <li><a href="{{route('platform.logout')}}">Sign out</a></li>
-                <li><a href="{{route('platform.main')}}">Dashboard</a></li>
+                <li><a href="{{route('platform.baskets')}}">Dashboard</a></li>
             @else
                 <li><a href="{{route('platform.login')}}">Sign in</a></li>
                 <li><a href="{{route('platform.register')}}">Sign up</a></li>

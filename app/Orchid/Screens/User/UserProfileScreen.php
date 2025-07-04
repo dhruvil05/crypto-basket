@@ -63,18 +63,24 @@ class UserProfileScreen extends Screen
                 ->novalidate()
                 ->canSee(Impersonation::isSwitch())
                 ->icon('bs.people')
-                ->route('platform.switch.logout'),
+                ->route('platform.switch.logout')
+                ->class('btn btn-info rounded px-4 py-2 fw-bold')
+                ->style('gap: 8px; transition: transform 0.2s ease;'),
 
             Link::make('KYC')
                 ->novalidate()
                 ->icon('bs.file-earmark-text')
                 ->route('platform.user.kyc')
+                ->class('btn btn-info rounded px-4 py-2 fw-bold')
+                ->style('gap: 8px; transition: transform 0.2s ease;')
                 ->canSee(auth()->user()->kyc_status === 'pending' || auth()->user()->kyc_status === 'rejected'),
 
             Button::make('Sign out')
                 ->novalidate()
                 ->icon('bs.box-arrow-left')
-                ->route('platform.logout'),
+                ->route('platform.logout')
+                ->class('btn btn-info rounded px-4 py-2 fw-bold')
+                ->style('gap: 8px; transition: transform 0.2s ease;'),
 
         ];
     }
@@ -93,6 +99,8 @@ class UserProfileScreen extends Screen
                         ->type(Color::BASIC())
                         ->id('copy-referral-btn')
                         ->icon('bs.copy')
+                        ->class('btn btn-info rounded px-4 py-2 fw-bold')
+                        ->style('gap: 8px; transition: transform 0.2s ease;')
                         ->rawAttributes([
                             'type' => 'button',
                             'onclick' => 'copyReferralCode()',
@@ -107,6 +115,8 @@ class UserProfileScreen extends Screen
                         ->type(Color::BASIC())
                         ->icon('bs.check-circle')
                         ->method('save')
+                        ->class('btn btn-info rounded px-4 py-2 fw-bold')
+                        ->style('gap: 8px; transition: transform 0.2s ease;')
                 ),
 
             Layout::block(ProfilePasswordLayout::class)
@@ -117,6 +127,8 @@ class UserProfileScreen extends Screen
                         ->type(Color::BASIC())
                         ->icon('bs.check-circle')
                         ->method('changePassword')
+                        ->class('btn btn-info rounded px-4 py-2 fw-bold')
+                        ->style('gap: 8px; transition: transform 0.2s ease;')
                 ),
 
             Layout::view('vendor.platform.script.custom_script')

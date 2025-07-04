@@ -71,6 +71,9 @@ class ReferralSettingsScreen extends Screen
                 Button::make('Save')
                     ->method('save')
                     ->type(\Orchid\Support\Color::DEFAULT())
+                    ->icon('bs.check-circle')
+                    ->class('btn btn-info rounded px-4 py-2 fw-bold')
+                    ->style('gap: 8px; transition: transform 0.2s ease;')
             ]),
         ];
     }

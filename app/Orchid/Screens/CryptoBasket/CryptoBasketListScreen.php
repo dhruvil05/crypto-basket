@@ -51,8 +51,10 @@ class CryptoBasketListScreen extends Screen
     {
         return [
             Link::make('Create Basket')
-                ->icon('plus')
+                ->icon('bs.plus-circle')
                 ->route('platform.baskets.create')
+                ->class('btn btn-info rounded px-4 py-2 fw-bold')
+                ->style('gap: 8px; transition: transform 0.2s ease;')
                 ->canSee(auth()->user() && auth()->user()->hasAccess('platform.systems.users')),
         ];
     }
@@ -159,7 +161,7 @@ class CryptoBasketListScreen extends Screen
         $walletTransaction->type = 'purchase';
         $walletTransaction->amount = $amount;
         $walletTransaction->status = 'completed';
-        $walletTransaction->source = 'basket_purchase';
+        $walletTransaction->source = 'Basket Purchase';
         $walletTransaction->reference_id = $basketId; // Reference to the basket purchased
         $walletTransaction->note = 'Purchased crypto basket: ' . $snapshot['name'];
         $walletTransaction->save();
