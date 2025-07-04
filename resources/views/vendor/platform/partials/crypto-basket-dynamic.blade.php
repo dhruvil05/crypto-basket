@@ -126,7 +126,7 @@
                     </div>
 
                     <div class="col-md-2 d-flex align-items-center">
-                        <button type="button" class="btn btn-danger remove-row" onclick="removeCryptoRow(this)"><x-orchid-icon path="bs.trash" class="small"/></button>
+                        <button type="button" class="btn bg-danger bg-opacity-10 text-danger rounded remove-row" onclick="removeCryptoRow(this)"><x-orchid-icon path="bs.trash" class="small"/></button>
                     </div>
                 </div>
             @endfor

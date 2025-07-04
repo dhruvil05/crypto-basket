@@ -69,7 +69,7 @@
                 <input type="number" class="form-control percentage-input" placeholder="%" value="${cycle.return_percentage}" required min="0" step="0.01">
             </div>
             <div class="col-md-2 d-flex align-items-center">
-                <button type="button" class="btn btn-danger remove-btn" onclick="removeReturnCycle(this)">
+                <button type="button" class="btn bg-danger bg-opacity-10 text-danger rounded remove-btn" onclick="removeReturnCycle(this)">
                     <x-orchid-icon path="bs.trash" class="small"/>
                 </button>
             </div>
