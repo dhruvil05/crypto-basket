@@ -154,6 +154,7 @@ class UserListScreen extends Screen
             'note' => "Added funds to wallet by Admin",
             'source' => 'manual',
             'status' => 'approved',
+            'amount_added'=>true
         ]);
 
         // Notify the user or perform any other actions as needed

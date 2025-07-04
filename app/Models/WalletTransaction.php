@@ -24,6 +24,7 @@ class WalletTransaction extends Model
         'source',           // manual | basket_purchase
         'reference_id',
         'note',
+        'amount_added'
     ];
 
     protected $casts = [
