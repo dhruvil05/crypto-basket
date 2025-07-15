@@ -8,7 +8,7 @@
                     with professionally managed crypto collections.</p>
                 <div class="hero-buttons">
                     <a href="#" class="btn-primary">Explore Baskets</a>
-                    <a href="#" class="btn-secondary">View Live Prices</a>
+                    <a href="#crypto-prices" class="btn-secondary">View Live Prices</a>
                 </div>
             </div>
         </div>
@@ -40,7 +40,7 @@
         </div>
     </section>
 
-    <section class="stats">
+    {{-- <section class="stats">
         <div class="container">
             <div class="stats-grid">
                 <div class="stat-item">
@@ -61,7 +61,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> --}}
 
     <!-- Crypto Table Section -->
     <!-- Crypto Table Section -->
