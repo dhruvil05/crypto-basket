@@ -11,7 +11,8 @@
             </a>
 
             <a class="header-brand order-last link-body-emphasis" href="{{ route(config('platform.index')) }}">
-                @includeFirst([config('platform.template.header'), 'platform::header'])
+                <img src="{{asset('/images/logo.svg')}}" alt="Vcoins logo" srcset="">
+                {{-- @includeFirst([config('platform.template.header'), 'platform::header']) --}}
             </a>
         </header>
 

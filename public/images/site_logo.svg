@@ -1,0 +1,5 @@
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <circle cx="30" cy="30" r="25" fill="black"></circle>
+  <text x="22" y="38" font-size="28" font-family="Arial, sans-serif" fill="white" font-weight="bold">V</text>
+  <text x="65" y="38" font-size="28" font-family="Arial, sans-serif" fill="black" font-weight="bold">Vcoins</text>
+</svg>

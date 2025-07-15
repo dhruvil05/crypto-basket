@@ -1,6 +1,8 @@
 <header>
     <nav class="container">
-        <a href="#" class="logo">{{ env('APP_NAME') }}</a>
+        <a href="#" class="logo">
+            <img src="{{asset('/images/logo.svg')}}" alt="Vcoins logo" srcset="">
+        </a>
         <ul class="nav-links">
             @if (auth()->check())
                 <li><a href="{{ route('platform.baskets') }}">Dashboard</a></li>
