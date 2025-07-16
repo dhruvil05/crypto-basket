@@ -20,7 +20,7 @@
             </div>
 
 
-            @includeFirst([config('platform.template.footer'), 'platform::footer'])
+            {{-- @includeFirst([config('platform.template.footer'), 'platform::footer']) --}}
         </div>
     </div>
 

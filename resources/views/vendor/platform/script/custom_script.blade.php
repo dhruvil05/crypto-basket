@@ -1,4 +1,5 @@
 <script>
+    (function() {
     function copyReferralCode(event) {
         var input = document.querySelector('input[name="user[referral_code]"]');
         var btn = event ? event.currentTarget : document.getElementById('copy-referral-btn');
@@ -35,5 +36,6 @@
     if (btn) {
         btn.addEventListener('click', copyReferralCode);
     }
+})();
     // });
 </script>

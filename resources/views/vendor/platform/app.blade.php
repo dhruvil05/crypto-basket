@@ -10,6 +10,7 @@
             - {{ config('app.name') }}
         @endif
     </title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}" />
     <meta name="csrf_token" content="{{ csrf_token() }}" id="csrf_token">
     <meta name="auth" content="{{ Auth::check() }}" id="auth">
     @if(\Orchid\Support\Locale::isRtl())
@@ -48,6 +49,8 @@
     @if(!empty(config('platform.vite', [])))
         @vite(config('platform.vite'))
     @endif
+    <link href="{{ asset('css/orchid-custom.css') }}" rel="stylesheet">
+
 </head>
 
 <body class="{{ \Orchid\Support\Names::getPageNameClass() }}" data-controller="pull-to-refresh">

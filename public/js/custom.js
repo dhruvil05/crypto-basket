@@ -1,8 +1,9 @@
 console.log("My custom JS file loaded!");
 
+(function() {
 function copyReferralCode(event) {
     var input = document.querySelector('input[name="user[referral_code]"]');
-    var btn = event ? event.currentTarget : document.getElementById('copy-referral-btn');
+    let btn = event ? event.currentTarget : document.getElementById('copy-referral-btn');
     if (input) {
         var code = input.value.trim();
         if (code) {
@@ -36,4 +37,5 @@ document.addEventListener("DOMContentLoaded", () => {
     if (btn) {
         btn.addEventListener('click', copyReferralCode);
     }
-});
+})
+})();

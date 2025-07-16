@@ -171,6 +171,7 @@ class UserProfileScreen extends Screen
     public function script(): string
     {
         return <<<'JS'
+        (function() {
             function copyReferralCode() {
                 var input = document.querySelector('input[name="user.referral_code"]');
                 if (input) {
@@ -180,6 +181,8 @@ class UserProfileScreen extends Screen
                     window.platform.toast("Referral code copied!");
                 }
             }
+            window.copyReferralCode = copyReferralCode;
+        })();
         JS;
     }
 }

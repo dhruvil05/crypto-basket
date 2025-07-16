@@ -9,8 +9,8 @@
 
                 <form method="POST" action="{{ route('platform.logout') }}">
                     @csrf
-                    <li><button type="submit" style="background: none; color:white; border:none; cursor: pointer;">
-                        <a href="javascript:void(0)" style="font-weight: 550">Sign out</a></button></li>
+                    <li><button type="submit" id="logout_btn"  style="background: none; color:white; border:none; cursor: pointer;">
+                        Sign out</button></li>
                 </form>
             @else
                 <li><a href="{{ route('platform.login') }}">Sign in</a></li>
